@@ -1,0 +1,22 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "prolific",
+  "owner": { "name": "Prolific", "url": "https://prolific.com" },
+  "metadata": {
+    "description": "Official skills from Prolific for scaling AI research workflows - API integration patterns and AI tools",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "prolific-skills",
+      "description": "Prolific skills for AI researchers: bulk submission API operations and a participant message analysis tool",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/prolific-api",
+        "./skills/examine-participant-messages"
+      ],
+      "author": { "name": "Prolific" }
+    }
+  ]
+}
