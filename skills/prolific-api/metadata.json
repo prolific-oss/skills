@@ -1,0 +1,7 @@
+{
+  "version": "1.0.0",
+  "organization": "Prolific",
+  "date": "March 2026",
+  "abstract": "Prolific API integration guide for AI research workflows covering bulk submission approval, two-step bonus payments, authentication, rate limiting, and error handling with Python and curl examples.",
+  "references": ["https://docs.prolific.com", "https://docs.prolific.com/api-reference/submissions/bulk-approve-submissions.md", "https://docs.prolific.com/api-reference/bonuses/create-bonus-payments.md", "https://docs.prolific.com/api-reference/bonuses/pay-bonus-payments.md"]
+}
