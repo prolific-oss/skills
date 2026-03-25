@@ -13,7 +13,7 @@
       "source": "./",
       "strict": false,
       "skills": [
-        "./skills/prolific-api",
+        "./skills/create-and-publish-study",
         "./skills/examine-participant-messages"
       ],
       "author": { "name": "Prolific" }

@@ -11,8 +11,8 @@ npx skills add prolific/skills
 Or install individual skills:
 
 ```bash
-# API integration patterns only
-npx skills add prolific/skills --skill prolific-api
+# Study creation and publishing only
+npx skills add prolific/skills --skill create-and-publish-study
 
 # Participant message analysis only
 npx skills add prolific/skills --skill examine-participant-messages
@@ -24,23 +24,21 @@ You can also add this as a plugin marketplace in Claude Code:
 
 ```bash
 /plugin marketplace add prolific/skills
-/plugin install prolific-api@prolific
+/plugin install create-and-publish-study@prolific
 /plugin install examine-participant-messages@prolific
 ```
 
 ## Skills Included
 
-### 1. prolific-api
+### 1. create-and-publish-study
 
-API integration reference for AI research workflows covering:
+CLI skill for creating and publishing Prolific studies covering:
 
-- **Authentication** — `PROLIFIC_TOKEN` setup and request header format
-- **Why Bulk Endpoints** — rationale for batching as usage scales, rate limit context
-- **Bulk Submission Approval** — async approval via `submission_ids` array; idempotent and safe to retry
-- **Bonus Payments** — two-step pattern: create batch → trigger payment; amounts in cents
-- **Rate Limiting** — exponential backoff patterns for 429 responses
-- **Error Handling** — status codes, causes, and recovery actions
-- **Code Examples** — Python and curl for all operations
+- **CLI Setup** — install the `prolific` CLI and authenticate with `PROLIFIC_TOKEN`
+- **Study Config** — YAML-driven study definition with annotated schema
+- **Study Creation** — `prolific study create -t config.yaml`; returns a draft study ID
+- **Study Publishing** — `--publish` flag or separate `prolific study publish <id>`; funds check before publishing
+- **Error Handling** — CLI error scenarios: auth failures, YAML parse errors, insufficient funds
 
 ### 2. examine-participant-messages
 
@@ -54,14 +52,14 @@ Autonomous agent skill that:
 
 ## Quick Reference
 
-### API Endpoints
+### CLI Commands
 
-| Operation | Method | Path |
-| --------- | ------ | ---- |
-| Bulk approve submissions | POST | `/api/v1/submissions/bulk-approve/` |
-| Create bonus batch | POST | `/api/v1/submissions/bonus-payments/` |
-| Pay bonus batch | POST | `/api/v1/bulk-bonus-payments/{id}/pay/` |
-| Fetch participant messages | GET | `/api/v1/messages/?created_after=<ISO8601>` |
+| Command | Purpose |
+| ------- | ------- |
+| `prolific study create -t config.yaml` | Create a study in draft state |
+| `prolific study create -t config.yaml --publish` | Create and immediately publish |
+| `prolific study publish <study-id>` | Publish an existing draft |
+| `prolific studies` | List all studies |
 
 ### Message Categories
 

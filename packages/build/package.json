@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "tsx src/build.ts --all",
-    "build-api": "tsx src/build.ts --skill=prolific-api",
+    "build-study": "tsx src/build.ts --skill=create-and-publish-study",
     "build-messages": "tsx src/build.ts --skill=examine-participant-messages",
     "validate": "tsx src/validate.ts",
     "dev": "pnpm build && pnpm validate"

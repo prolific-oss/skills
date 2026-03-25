@@ -1,5 +1,5 @@
 ---
-name: prolific-api
+name: create-and-publish-study
 description: Prolific CLI guide for creating and publishing research studies — YAML-driven study setup with the prolific CLI tool.
 metadata:
   author: Prolific
