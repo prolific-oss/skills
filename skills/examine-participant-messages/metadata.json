@@ -2,7 +2,7 @@
   "version": "1.0.0",
   "organization": "Prolific",
   "date": "March 2026",
-  "abstract": "Skill that fetches messages from participants in a Prolific study and analyses them for patterns. Filters messages client-side by study ID over the last 30 days.",
+  "abstract": "Autonomous skill that fetches recent messages from participants across all your Prolific studies and analyses them for patterns in feedback, technical issues, and payment questions.",
   "references": [
     "https://docs.prolific.com",
     "https://docs.prolific.com/api-reference/messages/get-messages.md",

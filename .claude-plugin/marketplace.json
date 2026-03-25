@@ -9,7 +9,7 @@
   "plugins": [
     {
       "name": "prolific-skills",
-      "description": "Prolific skills for AI researchers: bulk submission API operations and a participant message analysis tool",
+      "description": "Prolific skills for AI researchers: CLI-driven study creation and publishing, and cross-study participant message analysis",
       "source": "./",
       "strict": false,
       "skills": [

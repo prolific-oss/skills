@@ -44,11 +44,10 @@ CLI skill for creating and publishing Prolific studies covering:
 
 Autonomous agent skill that:
 
-- **Fetches messages** — live API calls using your `PROLIFIC_TOKEN`, no manual export needed
-- **Filters by study** — client-side filtering for the specified study ID
+- **Fetches messages** — retrieves all participant messages across your recent studies using the `prolific` CLI, no manual export needed
 - **Asks for focus** — prompts you for an analysis question with AI-task-specific options
-- **Analyses patterns** — groups by message category (technical, payment, feedback, etc.)
-- **Reports findings** — formatted markdown with representative quotes, impact ratings, and recommendations
+- **Analyses patterns** — groups by message category (technical, payment, feedback, etc.) across all studies
+- **Reports findings** — formatted markdown with representative quotes, study attribution, impact ratings, and recommendations
 
 ## Quick Reference
 
