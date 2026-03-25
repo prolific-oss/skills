@@ -1,97 +1,124 @@
 ---
 name: prolific-api
-description: Prolific API integration guide for AI research workflows - bulk submission approval and bonus payment patterns with Python and curl examples.
+description: Prolific CLI guide for creating and publishing research studies — YAML-driven study setup with the prolific CLI tool.
 metadata:
   author: Prolific
-  version: "1.0.0"
-  tags: prolific, api, submissions, bonuses, bulk-operations, ai-research
+  version: "1.1.0"
+  tags: prolific, cli, study, create, publish, ai-research
 ---
 
-# Prolific API
+# Prolific CLI
 
 ## When to Use
 
 Use this skill when you need to:
 
-- Approve AI task submissions programmatically at the end of a study run.
-- Pay participant bonuses based on performance or completion criteria.
-- Build automated pipelines that integrate Prolific into your research infrastructure.
+- Create a new Prolific study for AI data collection or annotation.
+- Publish a study to open it to participant recruitment.
+- Script or automate study launches across multiple configs.
 
-## Why Use Bulk Endpoints
+## Prerequisites
 
-> As your usage scales, we recommend batching requests to Prolific. These endpoints combine several operations into one API call, allowing Prolific to process each change when the wallet is available. It is standard practice for third-party APIs like Prolific's to impose rate limits on customer calls — one bulk request is far less likely to hit those limits than hundreds of individual calls.
+The `prolific` CLI must be installed and authenticated before running any commands:
 
-Replacing a loop of individual calls with one bulk call is usually a small refactor — swap the loop body for a list comprehension that collects IDs, then make a single request.
+```bash
+go install github.com/prolific-oss/cli/cmd/prolific@latest
+```
+
+See [`references/authentication.md`](references/authentication.md) for full installation options, token setup, and workspace defaults.
+
+For the full list of CLI flags run:
+
+```bash
+prolific study create --help
+```
+
+CLI reference: [docs.prolific.com/documentation/tooling/prolific-cli.md](https://docs.prolific.com/documentation/tooling/prolific-cli.md)
 
 ## Authentication
 
-All requests require your API token as a header:
+Set your API token as an environment variable:
 
 ```bash
 export PROLIFIC_TOKEN="your-token-here"
 ```
 
-```
-Authorization: Token $PROLIFIC_TOKEN
+Verify it works:
+
+```bash
+prolific whoami
 ```
 
-See [`references/authentication.md`](references/authentication.md) for full setup, shell profile persistence, and a validation snippet.
+See [`references/authentication.md`](references/authentication.md) for shell profile persistence and optional workspace config.
 
 ## Quick Reference
 
-| Method | Path                                              | Purpose                        |
-|--------|---------------------------------------------------|--------------------------------|
-| POST   | `/api/v1/submissions/bulk-approve/`               | Approve multiple submissions   |
-| POST   | `/api/v1/submissions/bonus-payments/`             | Create a bonus payment batch   |
-| POST   | `/api/v1/bulk-bonus-payments/{id}/pay/`           | Trigger a bonus payment batch  |
+| Command | Purpose |
+|---------|---------|
+| `prolific study create -t config.yaml` | Create a study in draft state |
+| `prolific study create -t config.yaml --publish` | Create and immediately publish |
+| `prolific study publish <study-id>` | Publish an existing draft |
+| `prolific studies` | List all studies |
+| `prolific study pause <study-id>` | Pause recruitment after publishing |
 
-## Bulk Submission Approval
+## Study Config File
 
-Send a list of submission IDs to approve them in a single call. The response is the async string `"Bulk approve in progress"` — the operation is idempotent and safe to retry.
+Studies are defined in YAML. Minimal example:
+
+```yaml
+name: My AI annotation task
+internal_name: annotation-batch-01
+description: Review short texts and answer questions about their tone.
+external_study_url: "https://your-tool.com/task?pid={{%PROLIFIC_PID%}}"
+prolific_id_option: url_parameters
+completion_code: ABC123
+total_available_places: 50
+estimated_completion_time: 10
+maximum_allowed_time: 20
+reward: 400
+device_compatibility:
+  - desktop
+peripheral_requirements: []
+submissions_config:
+  max_submissions_per_participant: 1
+```
+
+`reward` is in pence — `400` = £4.00. `{{%PROLIFIC_PID%}}` is required in the URL so Prolific can match submissions to participants. See [`references/study-create.md`](references/study-create.md) for the full annotated schema.
+
+## Creating a Study
 
 ```bash
-curl -s -X POST https://api.prolific.com/api/v1/submissions/bulk-approve/ \
-  -H "Authorization: Token $PROLIFIC_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"submission_ids": ["id1", "id2"]}'
+prolific study create -t study.yaml
 ```
 
-Prefer `submission_ids` over `participant_ids`. See [`references/bulk-approve.md`](references/bulk-approve.md) for a full Python example and response details.
+Returns the new study ID. The study is in **draft** state and not yet visible to participants.
 
-## Bonus Payments
+To capture the ID for scripted pipelines:
 
-Paying bonuses is a two-step process:
-
-1. **Create batch** — POST participant IDs and amounts (in cents) to get a cost preview including fees and VAT.
-2. **Trigger payment** — POST to the returned batch ID's `/pay/` endpoint once `total_amount` looks correct.
-
-```python
-import os, requests
-
-headers = {"Authorization": f"Token {os.environ['PROLIFIC_TOKEN']}", "Content-Type": "application/json"}
-
-# Step 1
-batch = requests.post(
-    "https://api.prolific.com/api/v1/submissions/bonus-payments/",
-    headers=headers,
-    json={"study_id": "<study-id>", "csv_bonuses": "participant_id,amount\nPID1,100\nPID2,150"},
-).json()
-print(f"Total charge: {batch['total_amount']} cents")
-
-# Step 2
-requests.post(f"https://api.prolific.com/api/v1/bulk-bonus-payments/{batch['id']}/pay/", headers=headers)
+```bash
+STUDY_ID=$(prolific study create -t study.yaml | awk '{print $NF}')
 ```
 
-Always check `total_amount` before triggering Step 2. See [`references/bonus-payments.md`](references/bonus-payments.md) for the full example and field descriptions.
+See [`references/study-create.md`](references/study-create.md) for batch creation patterns and all config fields.
 
-## Rate Limiting
+## Publishing a Study
 
-The API returns HTTP 429 when rate limits are exceeded. Use exponential backoff: 1s → 2s → 4s → 8s across 4 retries. Bulk calls count as a single request regardless of batch size, so batching is the most reliable way to stay within limits. See [`references/rate-limiting.md`](references/rate-limiting.md) for a reusable Python retry function.
+Check your wallet balance first (`prolific whoami`), then publish:
+
+```bash
+# Option A — publish at creation time
+prolific study create -t study.yaml --publish
+
+# Option B — publish an existing draft
+prolific study publish <study-id>
+```
+
+Publishing charges your wallet immediately and opens recruitment. See [`references/study-publish.md`](references/study-publish.md) for funds requirements and scripted publish patterns.
 
 ## Error Handling
 
-Check for `401` (bad token), `403` (study ownership), `404` (wrong IDs), `429` (rate limit), and `5xx` (server errors). See [`references/error-handling.md`](references/error-handling.md) for the full status code table and recovery actions.
+Common errors: `401` (bad token), `403` (wrong workspace), YAML parse failures, and insufficient funds at publish time. See [`references/error-handling.md`](references/error-handling.md) for the full table and recovery steps.
 
 ## Related
 
-- [`examine-participant-messages`](../examine-participant-messages/SKILL.md) — autonomous skill that fetches and analyses messages from participants in a given study. Useful for quality-checking AI tasks before approving submissions.
+- [`examine-participant-messages`](../examine-participant-messages/SKILL.md) — fetches and analyses messages from participants in a given study. Useful for monitoring task quality after a study goes live.
