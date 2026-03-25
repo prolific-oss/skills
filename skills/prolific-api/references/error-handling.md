@@ -1,24 +1,21 @@
 ---
 name: error-handling
-description: HTTP status codes, causes, and recovery actions
+description: CLI error scenarios, causes, and recovery actions
 ---
 
 # Error Handling
 
-| Status | Cause                        | Action                              |
-|--------|------------------------------|-------------------------------------|
-| 401    | Invalid/missing token        | Check `PROLIFIC_TOKEN`              |
-| 403    | No permission for this study | Verify study ownership              |
-| 404    | Study/submission not found   | Check IDs are correct               |
-| 429    | Rate limit exceeded          | Retry with exponential backoff      |
-| 5xx    | Prolific server error        | Retry after delay                   |
-
-## Notes
-
-- **Bulk approve is idempotent** — already-approved submissions are skipped, so it is safe to retry on network failure or a 5xx response without risk of double-approving.
-- **Always check `total_amount`** in the bonus payment batch response (Step 1) before triggering payment (Step 2). Once Step 2 is called, the charge is processed asynchronously and cannot be reversed through the API.
+| Error | Cause | Resolution |
+|-------|-------|-----------|
+| `401 Unauthorized` | Invalid or missing `PROLIFIC_TOKEN` | Re-export the token, then run `prolific whoami` to confirm it works |
+| `403 Forbidden` | No permission for this workspace or study | Check the `workspace` setting in `~/.config/prolific-oss/prolific.yaml` and verify study ownership |
+| YAML parse error | Malformed config file | Validate YAML syntax; check all required fields (`name`, `external_study_url`, `reward`, `total_available_places`) are present |
+| Insufficient funds | Publishing with a low wallet balance | Top up your wallet in the [Prolific dashboard](https://app.prolific.com) before retrying |
+| `404 Not Found` | Invalid study ID passed to publish or pause | Run `prolific studies` to list studies and confirm the ID |
+| `5xx` server error | Prolific service issue | Retry after a short delay; check [Prolific status](https://status.prolific.com) |
 
 ## Related references
 
-- `references/authentication.md` — fixing 401 errors and `PROLIFIC_TOKEN` setup
-- `references/rate-limiting.md` — exponential backoff implementation for 429 errors
+- `references/authentication.md` — CLI installation, token setup, and `prolific whoami` verification
+- `references/study-create.md` — required YAML fields and config schema
+- `references/study-publish.md` — funds check and publish steps
