@@ -7,6 +7,18 @@ description: Creating a Prolific study from a YAML config file using the prolifi
 
 Create a study by pointing the CLI at a YAML or JSON config file. The CLI validates the config and returns a study ID on success.
 
+## Required fields
+
+| Field | Type | Notes |
+|-------|------|-------|
+| `name` | string | Shown to participants on the listing page |
+| `description` | string | Participant-facing task description; supports HTML |
+| `reward` | integer | Payment **in pence** — `400` = £4.00 |
+| `estimated_completion_time` | integer | Minutes shown to participants |
+| `total_available_places` | integer | Number of participant slots |
+| `external_study_url` | string | Must contain `{{%PROLIFIC_PID%}}` |
+| `completion_codes` | array | See [Completion codes](#completion-codes) section below |
+
 ## Command
 
 ```bash
@@ -39,8 +51,12 @@ external_study_url: "https://your-tool.com/task?pid={{%PROLIFIC_PID%}}"
 # url_parameters: appended as a query param (most common)
 prolific_id_option: url_parameters
 
-# Code participants enter at the end of your task to confirm completion
-completion_code: ABC123
+# Completion codes — each code participants enter at the end of your task
+completion_codes:
+  - code: "ABC123"
+    code_type: COMPLETED          # COMPLETED | FAILED_ATTENTION_CHECK | NO_CONSENT | OTHER
+    actions:
+      - action: AUTOMATICALLY_APPROVE
 
 # Number of participant slots to open
 total_available_places: 50
@@ -70,6 +86,43 @@ peripheral_requirements: []
 # 1  = one submission per participant (default for most studies)
 submissions_config:
   max_submissions_per_participant: 1
+```
+
+## Completion codes
+
+`completion_codes` is a list. Each entry has:
+
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `code` | string | yes | The string participants enter; use `null` for no-code flows |
+| `code_type` | enum | yes | `COMPLETED`, `FAILED_ATTENTION_CHECK`, `NO_CONSENT`, `FOLLOW_UP_STUDY`, `GIVE_BONUS`, `INCOMPATIBLE_DEVICE`, `OTHER`, `FIXED_SCREENOUT` |
+| `actions` | array | yes | What Prolific does when this code is submitted |
+| `actor` | enum | no | `"participant"` (default) or `"researcher"` |
+
+### Actions
+
+| Action | Effect |
+|--------|--------|
+| `AUTOMATICALLY_APPROVE` | Auto-approve the submission |
+| `MANUALLY_REVIEW` | Submission goes to researcher review queue |
+| `REQUEST_RETURN` | Ask participant to return the submission |
+| `ADD_TO_PARTICIPANT_GROUP` | Add participant to a group |
+| `REMOVE_FROM_PARTICIPANT_GROUP` | Remove participant from a group |
+
+**Most studies use one code** with `code_type: COMPLETED` and `action: AUTOMATICALLY_APPROVE`. Add additional codes for attention-check failures or screen-outs.
+
+### Example: two codes
+
+```yaml
+completion_codes:
+  - code: "COMPLETE99"
+    code_type: COMPLETED
+    actions:
+      - action: AUTOMATICALLY_APPROVE
+  - code: "SCREENOUT1"
+    code_type: FAILED_ATTENTION_CHECK
+    actions:
+      - action: REQUEST_RETURN
 ```
 
 ## Scripted / batch creation
