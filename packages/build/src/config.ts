@@ -20,15 +20,15 @@ export interface SkillConfig {
 }
 
 export const SKILLS: Record<string, SkillConfig> = {
-  "prolific-api": {
-    name: "prolific-api",
-    title: "Prolific API Integration",
-    description: "Prolific API integration patterns for AI research workflows",
-    skillDir: join(SKILLS_DIR, "prolific-api"),
-    rulesDir: join(SKILLS_DIR, "prolific-api/rules"),
-    metadataFile: join(SKILLS_DIR, "prolific-api/metadata.json"),
-    outputFile: join(SKILLS_DIR, "prolific-api/AGENTS.md"),
-    sectionMap: { auth: 1, approve: 2, bonuses: 3, rate: 4, errors: 5 },
+  "create-and-publish-study": {
+    name: "create-and-publish-study",
+    title: "Create and Publish Study",
+    description: "CLI skill for creating and publishing Prolific research studies",
+    skillDir: join(SKILLS_DIR, "create-and-publish-study"),
+    rulesDir: join(SKILLS_DIR, "create-and-publish-study/rules"),
+    metadataFile: join(SKILLS_DIR, "create-and-publish-study/metadata.json"),
+    outputFile: join(SKILLS_DIR, "create-and-publish-study/AGENTS.md"),
+    sectionMap: { auth: 1, create: 2, publish: 3, errors: 4 },
   },
   "examine-participant-messages": {
     name: "examine-participant-messages",
@@ -46,4 +46,4 @@ export const SKILLS: Record<string, SkillConfig> = {
 };
 
 // Default skill
-export const DEFAULT_SKILL = "prolific-api";
+export const DEFAULT_SKILL = "create-and-publish-study";
