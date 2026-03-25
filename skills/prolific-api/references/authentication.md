@@ -1,11 +1,19 @@
 ---
 name: authentication
-description: PROLIFIC_TOKEN setup and request header format
+description: Prolific CLI installation, PROLIFIC_TOKEN setup, and auth verification
 ---
 
 # Authentication
 
-All Prolific API requests require a bearer token passed as an HTTP header.
+The `prolific` CLI authenticates using a token from your Prolific account.
+
+## Install the CLI
+
+```bash
+go install github.com/prolific-oss/cli/cmd/prolific@latest
+```
+
+Requires Go 1.26+. Alternatively, download a pre-built binary from the [GitHub releases page](https://github.com/prolific-oss/cli/releases) and add it to your `PATH`.
 
 ## Getting your token
 
@@ -23,44 +31,24 @@ To persist across shell sessions, add the export to your shell profile:
 
 ```bash
 echo 'export PROLIFIC_TOKEN="your-token-here"' >> ~/.zshrc
-```
-
-Then reload the profile:
-
-```bash
 source ~/.zshrc
 ```
 
-## Validating the token is set
+## Verifying authentication
 
 ```bash
-[ -z "$PROLIFIC_TOKEN" ] && echo "not_set" || echo "ok"
+prolific whoami
 ```
 
-## Request header format
+Returns your account details if the token is valid. A `401 Unauthorized` error means the token is missing, expired, or incorrect — return to **Settings → API** to verify or regenerate it.
 
-Every API request must include the following header:
+## Workspace defaults (optional)
 
-```
-Authorization: Token $PROLIFIC_TOKEN
-```
+To avoid passing `--workspace` on every command, set a default workspace ID in the CLI config file:
 
-### curl example
-
-```bash
-curl -s https://api.prolific.com/api/v1/users/me/ \
-  -H "Authorization: Token $PROLIFIC_TOKEN"
+```yaml
+# $HOME/.config/prolific-oss/prolific.yaml
+workspace: your-workspace-id
 ```
 
-### Python example
-
-```python
-import os
-import requests
-
-headers = {"Authorization": f"Token {os.environ['PROLIFIC_TOKEN']}"}
-response = requests.get("https://api.prolific.com/api/v1/users/me/", headers=headers)
-response.raise_for_status()
-```
-
-> A `401 Unauthorized` response means the token is missing, expired, or incorrect. Return to **Settings → API** to verify or regenerate it.
+Run `prolific workspace` to find your workspace ID.
