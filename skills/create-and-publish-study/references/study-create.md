@@ -150,3 +150,43 @@ STUDY_ID=$(prolific study create -t study.yaml | awk '{print $NF}')
 ```
 
 Run `prolific studies` to list all studies and confirm the new draft appears.
+
+## Participant filters
+
+Use `filters` to restrict who can see and take your study. Each filter has a `filter_id` and either `selected_values` (categorical) or a `range` (numeric).
+
+```yaml
+filters:
+  # Categorical filter: select specific allowed values
+  - filter_id: "fluent_languages"
+    selected_values:
+      - "en"
+
+  # Range filter: numeric min/max
+  - filter_id: "age"
+    range:
+      lower: 18
+      upper: 35
+```
+
+Omit `filters` entirely to recruit from the full Prolific pool.
+
+## Common advanced fields
+
+| Field | Type | Default | Notes |
+|-------|------|---------|-------|
+| `study_labels` | array | `[]` | Tags: `survey`, `annotation`, `decision_making_task`, `interview` |
+| `content_warnings` | array | `[]` | Flag sensitive content shown to participants before they start |
+| `naivety_distribution_rate` | float | `null` | `0` = prioritise speed; `1` = prioritise participants who haven't done similar studies |
+| `maximum_allowed_time` | integer | — | Hard timeout in minutes before submission is auto-returned; should exceed `estimated_completion_time` |
+| `internal_name` | string | — | Researcher-only label; not shown to participants |
+
+Example with labels and a content warning:
+
+```yaml
+study_labels:
+  - annotation
+content_warnings:
+  - "This study contains descriptions of emotionally difficult events."
+naivety_distribution_rate: 0.5
+```
