@@ -100,7 +100,7 @@ If a study YAML does not already exist, work through the groups below in order. 
 1. **Study name** — What is the public title participants will see?
 2. **Description** — Describe the task participants will do. (Paste or write the participant-facing text; HTML is supported.)
 3. **External URL** — What is the URL of your survey or experiment tool? (The `{{%PROLIFIC_PID%}}` parameter will be appended automatically if missing.)
-4. **Reward** — How much will you pay per participant, in pence? (e.g. `400` = £4.00. Aim for at least minimum wage for your target country based on the estimated time.)
+4. **Reward** — How much will you pay per participant, in pence? Prolific's **minimum is £6.00/hr** ($8.00/hr); **recommended is £9.00/hr** ($12.00/hr). Formula: `reward_pence = round((hourly_rate_pence × estimated_minutes) / 60)`. At the recommended rate: 5 min → `75`, 10 min → `150`, 30 min → `450`. Reward is fixed on publish and cannot be reduced.
 5. **Estimated time** — How many minutes should the task take?
 6. **Participant slots** — How many participants do you need?
 7. **Completion code** — What code will participants enter at the end of your task to confirm completion? (If your tool generates the code, provide it now. If unsure, use a random 6-character alphanumeric string.)
