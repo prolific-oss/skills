@@ -10,7 +10,7 @@
     "validate": "tsx src/validate.ts",
     "dev": "pnpm build && pnpm validate"
   },
-  "license": "MIT",
+  "license": "CC0-1.0",
   "devDependencies": {
     "@types/node": "^20.0.0",
     "tsx": "^4.7.0",
