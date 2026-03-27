@@ -13,7 +13,7 @@ The `prolific` CLI authenticates using a token from your Prolific account.
 go install github.com/prolific-oss/cli/cmd/prolific@latest
 ```
 
-Requires Go 1.26+. Alternatively, download a pre-built binary from the [GitHub releases page](https://github.com/prolific-oss/cli/releases) and add it to your `PATH`.
+Requires Go; see the [Prolific CLI documentation](https://github.com/prolific-oss/cli) for the current minimum supported version. Alternatively, download a pre-built binary from the [GitHub releases page](https://github.com/prolific-oss/cli/releases) and add it to your `PATH`.
 
 ## Getting your token
 
