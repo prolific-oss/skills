@@ -18,15 +18,7 @@ go version
 
 #### Installing Go
 
-Navigate to https://go.dev/doc/install and follow the platform-specific instructions:
-
-- **macOS**: Download the `.pkg` installer and run it, or use Homebrew: `brew install go`
-- **Linux**: Download the tarball and extract to `/usr/local`:
-  ```bash
-  rm -rf /usr/local/go && tar -C /usr/local -xzf go<VERSION>.linux-amd64.tar.gz
-  export PATH=$PATH:/usr/local/go/bin
-  ```
-- **Windows**: Download and run the `.msi` installer. Restart your terminal after installation.
+Navigate to https://go.dev/doc/install and follow the relevant instructions.
 
 After installing, verify with `go version` before continuing.
 
