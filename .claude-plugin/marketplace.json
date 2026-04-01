@@ -1,0 +1,28 @@
+{
+  "name": "prolific",
+  "owner": { "name": "Prolific", "url": "https://prolific.com" },
+  "metadata": {
+    "description": "Official skills from Prolific for AI research and workflows",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "prolific-cli",
+      "description": "Prolific skills to help leverage the Prolific CLI",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/install-prolific-cli"
+      ],
+      "author": { "name": "Prolific" }
+    },
+    {
+      "name": "prolific-beta-skills",
+      "description": "Skills currently being evaluated, but made available for experimentation",
+      "source": "./",
+      "strict": false,
+      "skills": [],
+      "author": { "name": "Prolific" }
+    }
+  ]
+}
