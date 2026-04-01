@@ -2,16 +2,18 @@
   "name": "prolific",
   "owner": { "name": "Prolific", "url": "https://prolific.com" },
   "metadata": {
-    "description": "Official skills from Prolific for AI research workflows",
+    "description": "Official skills from Prolific for AI research and workflows",
     "version": "1.0.0"
   },
   "plugins": [
     {
-      "name": "prolific-api",
-      "description": "Prolific skills for using the Prolific API",
+      "name": "prolific-cli",
+      "description": "Prolific skills to help leverage the Prolific CLI",
       "source": "./",
       "strict": false,
-      "skills": [],
+      "skills": [
+        "./skills/install-prolific-cli"
+      ],
       "author": { "name": "Prolific" }
     }
   ]
