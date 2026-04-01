@@ -15,6 +15,14 @@
         "./skills/install-prolific-cli"
       ],
       "author": { "name": "Prolific" }
+    },
+    {
+      "name": "prolific-beta-skills",
+      "description": "Skills currently being evaluated, but made available for experimentation",
+      "source": "./",
+      "strict": false,
+      "skills": [],
+      "author": { "name": "Prolific" }
     }
   ]
 }
