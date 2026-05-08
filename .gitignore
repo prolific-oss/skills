@@ -12,3 +12,10 @@
 # Environment
 .env
 .env.local
+
+# Eval binary cache — downloaded at runtime by sandbox.py
+skills/evals/_cache/*
+!skills/evals/_cache/.gitkeep
+
+# Misc
+notes.md
