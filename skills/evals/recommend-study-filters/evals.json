@@ -1,0 +1,19 @@
+{
+  "skill_name": "recommend-study-filters",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I'm running a study on workplace productivity tools. I need US-based participants who are employed full-time and aged between 25 and 45.",
+      "expected_output": "The agent fetches the available filter list, then recommends a country or residence filter targeting the US, an employment status filter for full-time employment, and an age range filter with lower bound 25 and upper bound 45. Each recommendation includes the filter_id and the specific values or range to use.",
+      "assertions": [
+        "The agent runs 'prolific filters -n' before making any recommendations",
+        "The agent recommends a filter targeting US-based participants and provides its filter_id",
+        "The agent recommends a filter for full-time employment and provides its filter_id",
+        "The agent recommends an age range filter with a lower bound of 25 and upper bound of 45",
+        "The agent provides filter_id values for every filter it recommends",
+        "The agent explains why each recommended filter matches the stated requirement",
+        "The agent formats at least one recommendation with selected_values or selected_range in the Prolific API JSON structure"
+      ]
+    }
+  ]
+}

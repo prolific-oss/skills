@@ -11,7 +11,9 @@
       "description": "Skills currently being developed and evaluated, made available for experimentation and feedback",
       "source": "./",
       "strict": false,
-      "skills": [],
+      "skills": [
+        "./skills/recommend-study-filters"
+      ],
       "author": { "name": "Prolific" }
     }
   ]
