@@ -35,7 +35,7 @@ These are:
 
 We use Langfuse as the telemetry layer and platform for skill tracing, prompt management, and evaluation - but the eval parameters themselves are platform and tool agnostic.
 
-Here is an example of a eval config:
+Here is an example of an eval config:
 
 ```json
 {
