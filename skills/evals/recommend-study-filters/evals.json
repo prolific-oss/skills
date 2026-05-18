@@ -33,7 +33,7 @@
       "prompt": "I'm researching the impact of early childcare on parental wellbeing. My participants must be parents with at least one child under 5 years old, currently not in employment, and must have English as their first language.",
       "expected_output": "The agent fetches the filter list and recommends filters for: parental status (using the 'children' filter, filter_id: children, selecting 'Yes'); year of birth of youngest child (using year-of-birth-of-youngest-child, selecting years 2021–2026 to capture children under 5 as of 2026); employment status excluding current employment (using employment-status, selecting choices for 'Unemployed' or 'Not in paid work'); and first language set to English (using first-language, selecting 'English'). Each recommendation includes filter_id and values.",
       "assertions": [
-        "The agent runs 'prolific filters  -n' before making any recommendations",
+        "The agent runs 'prolific filters -n' before making any recommendations",
         "The agent recommends a filter related to parental status or having children and provides its filter_id",
         "The agent recommends a filter using year-of-birth-of-youngest-child or years-of-birth-of-your-children to identify children under 5 (born 2021 or later as of 2026) and provides its filter_id",
         "The agent recommends a filter targeting participants who are not currently employed and provides its filter_id",
@@ -47,7 +47,7 @@
       "prompt": "I'm studying how people respond to unexpected life events. I need participants who have experienced a major personal crisis in the last 6 months.",
       "expected_output": "The agent fetches the filter list, acknowledges that there is no filter directly matching 'recent personal crisis', and suggests the closest available alternatives (such as health-related filters or open screener questions), explaining why a direct match is unavailable.",
       "assertions": [
-        "The agent runs 'prolific filters  -n' before responding",
+        "The agent runs 'prolific filters -n' before responding",
         "The agent explicitly states that no filter directly matches the requirement for recent personal crisis experience",
         "The agent suggests at least one alternative or workaround",
         "The agent does not fabricate a filter_id that does not exist in the available filter list"
