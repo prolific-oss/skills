@@ -1,7 +1,7 @@
 ---
 name: recommend-study-filters
 description: Given a description of your target participant population, fetches all available Prolific filters and recommends the best matching combination with filter IDs and values ready to use.
-version: ...
+version: 0.1.0
 ---
 
 ## Recommend Study Filters
