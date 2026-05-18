@@ -16,6 +16,7 @@ Environment variables (copy .env.example to .env):
     ANTHROPIC_API_KEY
     PROLIFIC_TEST_TOKEN  (preferred) or PROLIFIC_TOKEN
     LANGFUSE_PUBLIC_KEY, LANGFUSE_SECRET_KEY, LANGFUSE_BASE_URL
+    LANGFUSE_USER_ID  (optional; attributes eval traces to a Langfuse user)
     OTEL_EXPORTER_OTLP_ENDPOINT, OTEL_EXPORTER_OTLP_HEADERS
 """
 
@@ -137,11 +138,14 @@ def run_experiment(
 
     with_or_without = "with-skill" if with_skill else "without-skill"
 
-    with propagate_attributes(
-        session_id=session_id,
-        user_id="655f77ebf0b16e6434ee470e",
-        tags=["prolific-cli", "filters", "test", with_or_without],
-    ):
+    attrs = {
+        "session_id": session_id,
+        "tags": ["prolific-cli", "filters", "test", with_or_without],
+    }
+    if user_id := os.getenv("LANGFUSE_USER_ID"):
+        attrs["user_id"] = user_id
+
+    with propagate_attributes(**attrs):
         dataset.run_experiment(
             name=experiment_name,
             task=task,
