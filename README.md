@@ -55,7 +55,7 @@ Here is an example of an eval config:
 
 ## Running the Evals
 
-Go to [Langfuse](https://cloud.langfuse.com/) and create an account. Langfuse also provide [skills](https://github.com/langfuse/skills).
+Go to [Langfuse](https://cloud.langfuse.com/) and create an account. Langfuse also provides [skills](https://github.com/langfuse/skills).
 
 Create a .env file in skills/evals/recommend-study-filters/ based on the .env.example and set:
 
