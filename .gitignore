@@ -24,3 +24,6 @@ skills/evals/_cache/*
 
 # Misc
 notes.md
+
+skills/evals/*/.env
+skills/evals/*/.env.local
