@@ -102,7 +102,7 @@ This section is a guide to writing high-quality evals for skills in this repo
 
 ### Eval File Structure
 
-Each skill's evals are coloacted with the skill.
+Each skill's evals are co-located with the skill.
 
 ```
 skills/
