@@ -12,3 +12,18 @@
 # Environment
 .env
 .env.local
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Eval binary cache — downloaded at runtime by sandbox.py
+skills/evals/_cache/*
+!skills/evals/_cache/.gitkeep
+
+# Misc
+notes.md
+
+skills/evals/*/.env
+skills/evals/*/.env.local

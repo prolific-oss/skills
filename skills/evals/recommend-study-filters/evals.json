@@ -1,0 +1,57 @@
+{
+  "skill_name": "recommend-study-filters",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I'm running a study on workplace productivity tools. I need US-based participants who are employed full-time and aged between 25 and 45.",
+      "expected_output": "The agent fetches the available filter list, then recommends a country or residence filter targeting the US, an employment status filter for full-time employment, and an age range filter with lower bound 25 and upper bound 45. Each recommendation includes the filter_id and the specific values or range to use.",
+      "assertions": [
+        "The agent runs 'prolific filters -n' before making any recommendations",
+        "The agent recommends a filter targeting US-based participants and provides its filter_id",
+        "The agent recommends a filter for full-time employment and provides its filter_id",
+        "The agent recommends an age range filter with a lower bound of 25 and upper bound of 45",
+        "The agent provides filter_id values for every filter it recommends",
+        "The agent explains why each recommended filter matches the stated requirement",
+        "The agent formats at least one recommendation with selected_values or selected_range in the Prolific API JSON structure"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I want to study online learning habits among working-age adults in the UK who hold at least a university degree",
+      "expected_output": "The agent fetches the filter list, recommends a UK country of residence filter (using current-country-of-residence or uk-country-of-residence), an education level filter targeting university-degree holders or above (choices 4, 5, or 6 in highest-education-level-completed), and an age filter for working-age adults (e.g. 18–65 using the age filter). Each recommendation includes the filter_id and selected values.",
+      "assertions": [
+        "The agent runs 'prolific filters -n' before making any recommendations",
+        "The agent recommends a filter targeting UK-based participants and provides its filter_id",
+        "The agent recommends an education filter targeting university degree level or above and provides its filter_id",
+        "The agent recommends an age filter for working-age adults (e.g. lower bound 18, upper bound 65) and provides its filter_id",
+        "The agent provides filter_id values for every filter it recommends",
+        "The agent formats at least one recommendation with selected_values or selected_range in the Prolific API JSON structure"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "I'm researching the impact of early childcare on parental wellbeing. My participants must be parents with at least one child under 5 years old, currently not in employment, and must have English as their first language.",
+      "expected_output": "The agent fetches the filter list and recommends filters for: parental status (using the 'children' filter, filter_id: children, selecting 'Yes'); year of birth of youngest child (using year-of-birth-of-youngest-child, selecting years 2021–2026 to capture children under 5 as of 2026); employment status excluding current employment (using employment-status, selecting choices for 'Unemployed' or 'Not in paid work'); and first language set to English (using first-language, selecting 'English'). Each recommendation includes filter_id and values.",
+      "assertions": [
+        "The agent runs 'prolific filters -n' before making any recommendations",
+        "The agent recommends a filter related to parental status or having children and provides its filter_id",
+        "The agent recommends a filter using year-of-birth-of-youngest-child or years-of-birth-of-your-children to identify children under 5 (born 2021 or later as of 2026) and provides its filter_id",
+        "The agent recommends a filter targeting participants who are not currently employed and provides its filter_id",
+        "The agent recommends a filter for English as a first language and provides its filter_id",
+        "The agent provides filter_id values for every filter it recommends",
+        "The agent formats at least one recommendation with selected_values or selected_range in the Prolific API JSON structure"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "I'm studying how people respond to unexpected life events. I need participants who have experienced a major personal crisis in the last 6 months.",
+      "expected_output": "The agent fetches the filter list, acknowledges that there is no filter directly matching 'recent personal crisis', and suggests the closest available alternatives (such as health-related filters or open screener questions), explaining why a direct match is unavailable.",
+      "assertions": [
+        "The agent runs 'prolific filters -n' before responding",
+        "The agent explicitly states that no filter directly matches the requirement for recent personal crisis experience",
+        "The agent suggests at least one alternative or workaround",
+        "The agent does not fabricate a filter_id that does not exist in the available filter list"
+      ]
+    }
+  ]
+}

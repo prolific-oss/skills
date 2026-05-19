@@ -7,21 +7,13 @@
   },
   "plugins": [
     {
-      "name": "prolific-cli",
-      "description": "Prolific skills to help leverage the Prolific CLI",
+      "name": "prolific-beta-skills",
+      "description": "Skills currently being developed and evaluated, made available for experimentation and feedback",
       "source": "./",
       "strict": false,
       "skills": [
-        "./skills/install-prolific-cli"
+        "./skills/recommend-study-filters"
       ],
-      "author": { "name": "Prolific" }
-    },
-    {
-      "name": "prolific-beta-skills",
-      "description": "Skills currently being evaluated, but made available for experimentation",
-      "source": "./",
-      "strict": false,
-      "skills": [],
       "author": { "name": "Prolific" }
     }
   ]

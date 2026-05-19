@@ -14,7 +14,7 @@ Or install individual skills:
 
 ```bash
 # example prolific skill only
-npx skills add prolific/skills --skill install-prolific-cli
+npx skills add prolific/skills --skill recommend-study-filters
 ```
 
 ## Documentation
@@ -22,6 +22,10 @@ npx skills add prolific/skills --skill install-prolific-cli
 - [Prolific Documentation](https://docs.prolific.com/documentation/get-started/overview)
 - [API Reference](https://docs.prolific.com/api-reference/introduction)
 - [Prolific CLI](https://docs.prolific.com/documentation/tooling/prolific-cli)
+
+## Contributing
+
+Working on the skills themselves or their evals? See [EVALS.md](./EVALS.md).
 
 ## License
 
