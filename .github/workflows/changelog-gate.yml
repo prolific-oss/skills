@@ -1,0 +1,44 @@
+name: Changelog gate
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: changelog-gate-${{ github.repository }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  require-changelog-if-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require CHANGELOG.md and marketplace.json when release label is present
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          if ! gh pr view "${PR_NUMBER}" --repo "${REPO}" \
+              --json labels -q '.labels[].name' | grep -Fxq 'release'; then
+            echo "No release label; check passed."
+            exit 0
+          fi
+          files=$(gh pr view "${PR_NUMBER}" --repo "${REPO}" \
+              --json files -q '.files[].path')
+          if ! grep -Fxq 'CHANGELOG.md' <<< "$files"; then
+            echo "::error::PR has 'release' label but CHANGELOG.md is not modified."
+            echo "Run \`make release VERSION=X.Y.Z\` and push before merging."
+            exit 1
+          fi
+          if ! grep -Fxq '.claude-plugin/marketplace.json' <<< "$files"; then
+            echo "::error::PR has 'release' label but .claude-plugin/marketplace.json is not modified."
+            echo "Bump metadata.version AND plugins[0].version (must match CHANGELOG version)."
+            echo "Without this bump, Claude Code will not deliver the release to existing users."
+            exit 1
+          fi
+          echo "CHANGELOG.md + marketplace.json both modified; check passed."
