@@ -39,8 +39,13 @@ frequent small versions. The CHANGELOG.md is the source of truth for
 the current version; `.claude-plugin/marketplace.json` mirrors it
 and is what Claude Code reads to deliver updates.
 
-See [DEVELOPMENT.md](./DEVELOPMENT.md) for the full versioning model
-and release mechanics.
+The two install paths above detect updates differently — Claude Code
+checks `marketplace.json`'s plugin version, while `npx skills`
+checks the GitHub tree SHA of the skill folder. Both are well served
+by our release-on-merge model. See
+[DEVELOPMENT.md → Update Detection Across Install Paths](./DEVELOPMENT.md#update-detection-across-install-paths)
+for the full picture; see [DEVELOPMENT.md](./DEVELOPMENT.md) for the
+full versioning model and release mechanics.
 
 ## Contributing
 

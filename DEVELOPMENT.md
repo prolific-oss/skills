@@ -61,6 +61,56 @@ Why all three move together:
 The `make release VERSION=X.Y.Z` target (see [Tooling](#tooling))
 edits all three at once so they cannot drift.
 
+## Update Detection Across Install Paths
+
+This repo is installable two ways. They detect updates via completely
+different mechanisms, and both are supported by our release model
+without any extra work.
+
+| Install path                                | What it reads to detect updates       | When users see an update                       |
+| ------------------------------------------- | ------------------------------------- | ---------------------------------------------- |
+| `/plugin install ...@prolific` (Claude Code) | `marketplace.json → plugins[0].version` | When `plugins[0].version` is bumped (our release model) |
+| `npx skills add prolific/skills` ([vercel-labs/skills](https://github.com/vercel-labs/skills)) | GitHub Trees API → skill folder SHA   | When any file in the skill folder changes      |
+
+### Claude Code marketplace path
+
+Uses [Anthropic's version-resolution chain](#anthropic-version-resolution).
+Updates are deliberate: a user only sees a new version when we bump
+`plugins[0].version` in `marketplace.json`. Push commits without a
+version bump and existing installs stay frozen on the cached copy.
+This is what most of this document is about.
+
+### npx skills path
+
+The `vercel-labs/skills` CLI tracks installed skills in a
+`.skill-lock.json` file (see
+[`src/skill-lock.ts`](https://github.com/vercel-labs/skills/blob/main/src/skill-lock.ts)).
+Each entry stores a `skillFolderHash` — the GitHub tree SHA of the
+skill's folder. The source comment is explicit:
+
+> This hash changes when ANY file in the skill folder changes.
+
+So `npx skills update` sees an update available whenever a skill
+file changes on `main`, regardless of any version field. The
+frontmatter `version:` and a hypothetical `plugin.json` are
+informational metadata for this path — not the trigger for update
+detection.
+
+### Consequences for our release model
+
+- **Both audiences are well served by release-on-merge.** Every
+  skill-touching PR cuts a tag (good for Claude Code users) AND
+  changes the file (good for npx users). The two paths stay in sync.
+- **npx users may see the update slightly sooner** — they see it as
+  soon as `main` advances, while Claude Code users see it after
+  `create-release.yml` tags + publishes the GitHub Release (seconds
+  to a minute later in practice).
+- **The `release` label gate is doubly important.** If a PR slipped
+  in skill changes without the label, Claude Code users would not get
+  an update (no version bump) but npx users would (tree SHA changed
+  anyway). `scripts/require_release_label.py` prevents that
+  divergence at PR time.
+
 ## Bump Rules
 
 The release-level bump severity for a PR is the **max** severity across
