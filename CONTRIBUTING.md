@@ -1,6 +1,6 @@
 # Contributing to `prolific/skills`
 
-Thank you for contributing. This guide covers what you need to know before opening a pull request.
+Thank you for contributing. This guide covers what you need to know before opening a pull request. Contributions are restricted to Prolific engineers.
 
 For the deeper "why" — version-resolution rules, bump semantics, release
 mechanics — see [DEVELOPMENT.md](DEVELOPMENT.md).
@@ -85,4 +85,4 @@ Expect a review within approximately one week. Feedback is constructive — we'r
 
 ## License
 
-This project is licensed under [Apache 2.0](LICENSE.md). By contributing, you agree that your contributions will be licensed under the same terms.
+This project is licensed under [CC0 1.0 Universal](LICENSE.md). By contributing, you agree that your contributions will be licensed under the same terms.

@@ -43,11 +43,11 @@ without bumping the plugin's version in the marketplace entry will
 
 Every release bumps the same SemVer in three places:
 
-| Field                       | File                                                  | What it controls                                                          |
-| --------------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------- |
-| `metadata.version`          | `.claude-plugin/marketplace.json` (root)              | Whether `/plugin marketplace update` re-pulls the catalog                 |
-| Plugin entry `version`      | `.claude-plugin/marketplace.json` (`plugins[*].version`) | Whether `/plugin update` refreshes the installed plugin for users          |
-| Skill frontmatter `version` | `skills/<name>.md` (top-level YAML)                   | Contributor signal + changelog grouping. **Claude Code ignores this.**    |
+| Field                       | File                                                     | What it controls                                                       |
+| --------------------------- | -------------------------------------------------------- | ---------------------------------------------------------------------- |
+| `metadata.version`          | `.claude-plugin/marketplace.json` (root)                 | Whether `/plugin marketplace update` re-pulls the catalog              |
+| Plugin entry `version`      | `.claude-plugin/marketplace.json` (`plugins[*].version`) | Whether `/plugin update` refreshes the installed plugin for users      |
+| Skill frontmatter `version` | `skills/<name>.md` (top-level YAML)                      | Contributor signal + changelog grouping. **Claude Code ignores this.** |
 
 Why all three move together:
 
@@ -67,10 +67,10 @@ This repo is installable two ways. They detect updates via completely
 different mechanisms, and both are supported by our release model
 without any extra work.
 
-| Install path                                | What it reads to detect updates       | When users see an update                       |
-| ------------------------------------------- | ------------------------------------- | ---------------------------------------------- |
-| `/plugin install ...@prolific` (Claude Code) | `marketplace.json → plugins[0].version` | When `plugins[0].version` is bumped (our release model) |
-| `npx skills add prolific/skills` ([vercel-labs/skills](https://github.com/vercel-labs/skills)) | GitHub Trees API → skill folder SHA   | When any file in the skill folder changes      |
+| Install path                                                                                   | What it reads to detect updates         | When users see an update                                |
+| ---------------------------------------------------------------------------------------------- | --------------------------------------- | ------------------------------------------------------- |
+| `/plugin install ...@prolific` (Claude Code)                                                   | `marketplace.json → plugins[0].version` | When `plugins[0].version` is bumped (our release model) |
+| `npx skills add prolific/skills` ([vercel-labs/skills](https://github.com/vercel-labs/skills)) | GitHub Trees API → skill folder SHA     | When any file in the skill folder changes               |
 
 ### Claude Code marketplace path
 
@@ -133,12 +133,12 @@ changes.
 A contributor touching a skill bumps **only that skill's frontmatter
 `version`** in their PR, plus marketplace.json + CHANGELOG.
 
-| Change to a skill                                            | Per-skill bump                |
-| ------------------------------------------------------------ | ----------------------------- |
-| Trigger criteria narrowed/widened; output schema changed     | MINOR (pre-1.0) / MAJOR (post-1.0) |
-| New capability or expanded scope (additive)                  | MINOR                              |
-| Prompt wording fix, typo, no behavioural change              | PATCH                              |
-| Eval-only or doc-only change                                 | No bump                            |
+| Change to a skill                                        | Per-skill bump                     |
+| -------------------------------------------------------- | ---------------------------------- |
+| Trigger criteria narrowed/widened; output schema changed | MINOR (pre-1.0) / MAJOR (post-1.0) |
+| New capability or expanded scope (additive)              | MINOR                              |
+| Prompt wording fix, typo, no behavioural change          | PATCH                              |
+| Eval-only or doc-only change                             | No bump                            |
 
 ## Release Workflow
 
@@ -159,11 +159,11 @@ maintainer-cuts-release ritual.
 
 ## What CI Enforces
 
-| Workflow              | What it catches                                                                          |
-| --------------------- | ---------------------------------------------------------------------------------------- |
-| `validate.yml`        | Bad commit message; missing/invalid skill frontmatter; missing release label on a skill-touching PR; tag collision; version mismatch across the three sync points |
-| `changelog-gate.yml`  | `release`-labelled PR that doesn't modify both `CHANGELOG.md` AND `.claude-plugin/marketplace.json` |
-| `create-release.yml`  | Re-checks version match after merge before tagging; fails the release rather than tag inconsistently |
+| Workflow             | What it catches                                                                                                                                                   |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `validate.yml`       | Bad commit message; missing/invalid skill frontmatter; missing release label on a skill-touching PR; tag collision; version mismatch across the three sync points |
+| `changelog-gate.yml` | `release`-labelled PR that doesn't modify both `CHANGELOG.md` AND `.claude-plugin/marketplace.json`                                                               |
+| `create-release.yml` | Re-checks version match after merge before tagging; fails the release rather than tag inconsistently                                                              |
 
 The single most important failure mode these gates prevent is:
 "CHANGELOG bumped but `plugins[0].version` forgotten" — users would
@@ -171,16 +171,16 @@ get no update and we'd ship a silent no-op release.
 
 ## Tooling
 
-| File                                | Purpose                                                                                              |
-| ----------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| `cliff.toml`                        | git-cliff config; groups conventional commits by scope (skill name) for CHANGELOG generation         |
-| `CHANGELOG.md`                      | Source of truth for the release version; top semver heading drives the tag                           |
-| `scripts/changelog.py`              | `extract-version` and `extract-section X.Y.Z` — used by CI to read CHANGELOG                         |
-| `scripts/validate_skills.py`        | Asserts every skill has `name`, `description`, valid-semver `version` in frontmatter                 |
-| `scripts/validate_marketplace.py`   | Asserts marketplace.json is structurally valid; on release PRs also asserts version sync + no tag collision |
-| `scripts/require_release_label.py`  | Asserts that skill-touching PRs carry the `release` label                                            |
-| `scripts/bump_release.py`           | Called by `make release`; stamps the three versions and stubs the CHANGELOG section                  |
-| `Makefile`                          | `validate`, `release`, `changelog` targets                                                            |
+| File                               | Purpose                                                                                                     |
+| ---------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `cliff.toml`                       | git-cliff config; groups conventional commits by scope (skill name) for CHANGELOG generation                |
+| `CHANGELOG.md`                     | Source of truth for the release version; top semver heading drives the tag                                  |
+| `scripts/changelog.py`             | `extract-version` and `extract-section X.Y.Z` — used by CI to read CHANGELOG                                |
+| `scripts/validate_skills.py`       | Asserts every skill has `name`, `description`, valid-semver `version` in frontmatter                        |
+| `scripts/validate_marketplace.py`  | Asserts marketplace.json is structurally valid; on release PRs also asserts version sync + no tag collision |
+| `scripts/require_release_label.py` | Asserts that skill-touching PRs carry the `release` label                                                   |
+| `scripts/bump_release.py`          | Called by `make release`; stamps the three versions and stubs the CHANGELOG section                         |
+| `Makefile`                         | `validate`, `release`, `changelog` targets                                                                  |
 
 ## Prerequisites for the Release Pipeline
 
@@ -193,7 +193,7 @@ These are configured once on the GitHub repo (not via code):
 
 ## Release Channels (Future)
 
-Per [Anthropic's release channels guidance](https://code.claude.com/docs/en/plugin-marketplaces#set-up-release-channels),
+As per [Anthropic's release channels guidance](https://code.claude.com/docs/en/plugin-marketplaces#set-up-release-channels),
 `stable`/`latest` channels are implemented as **two marketplace JSONs
 pointing at different git refs of the same repo**, not as branches
 inside a single marketplace JSON:
@@ -207,6 +207,5 @@ given time, or Claude Code dedupes them and skips the update. Because
 we set `version` explicitly (not commit SHA), this constraint is
 naturally satisfied as long as `stable` lags `main`.
 
-**Deferred until v1.0.** Trigger to revisit: first skill graduates
-from beta, or first external Prolific team adopts the marketplace at
-scale.
+**Deferred until v1.0.** Trigger to revisit: skills graduate
+from beta
