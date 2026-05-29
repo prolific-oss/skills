@@ -3,7 +3,7 @@
   "owner": { "name": "Prolific", "url": "https://prolific.com" },
   "metadata": {
     "description": "Official skills from Prolific for AI research and workflows",
-    "version": "1.0.0"
+    "version": "0.1.0"
   },
   "plugins": [
     {
@@ -11,6 +11,7 @@
       "description": "Skills currently being developed and evaluated, made available for experimentation and feedback",
       "source": "./",
       "strict": false,
+      "version": "0.1.0",
       "skills": [
         "./skills/recommend-study-filters"
       ],

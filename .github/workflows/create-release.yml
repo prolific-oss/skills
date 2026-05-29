@@ -1,0 +1,100 @@
+name: Create Release
+
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: release-${{ github.repository }}
+  cancel-in-progress: false
+
+jobs:
+  should-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      release: ${{ steps.check.outputs.release }}
+    steps:
+      - name: Check merged PRs for release label
+        id: check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          PUSH_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          COUNT=$(jq '(.commits // []) | length' "$GITHUB_EVENT_PATH")
+          if [ "$COUNT" -eq 0 ]; then
+            mapfile -t candidates < <(printf '%s\n' "${PUSH_SHA}")
+          else
+            mapfile -t candidates < <(jq -r '.commits[].id' "$GITHUB_EVENT_PATH")
+          fi
+          release=false
+          for sha in "${candidates[@]}"; do
+            [ -z "$sha" ] && continue
+            result=$(gh api \
+              "repos/${REPO}/commits/${sha}/pulls" \
+              --jq 'any(.[]; (.labels // []) | map(.name) | index("release") != null)')
+            [ "$result" = "true" ] && release=true && break
+          done
+          echo "release=${release}" >> "$GITHUB_OUTPUT"
+
+  finalize-release:
+    needs: should-release
+    if: needs.should-release.outputs.release == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      tag: ${{ steps.version.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+
+      - name: Extract version from CHANGELOG
+        id: version
+        run: |
+          set -euo pipefail
+          VERSION=$(python3 scripts/changelog.py extract-version)
+          echo "tag=v${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+
+      - name: Verify marketplace.json matches CHANGELOG
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          set -euo pipefail
+          MKT_VERSION=$(jq -r '.metadata.version' .claude-plugin/marketplace.json)
+          PLUGIN_VERSION=$(jq -r '.plugins[0].version' .claude-plugin/marketplace.json)
+          if [ "$MKT_VERSION" != "$VERSION" ]; then
+            echo "::error::marketplace.json metadata.version ($MKT_VERSION) != CHANGELOG version ($VERSION)"
+            exit 1
+          fi
+          if [ "$PLUGIN_VERSION" != "$VERSION" ]; then
+            echo "::error::marketplace.json plugins[0].version ($PLUGIN_VERSION) != CHANGELOG version ($VERSION)"
+            echo "Without bumping the plugin version, Claude Code will not deliver this release to users."
+            exit 1
+          fi
+
+      - name: Extract release notes
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: python3 scripts/changelog.py extract-section "${VERSION}" > RELEASE_NOTES.md
+
+      - name: Create tag and GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "$TAG" -m "Release $TAG"
+          git push origin "$TAG"
+          gh release create "$TAG" \
+            --title "$TAG" \
+            --notes-file RELEASE_NOTES.md

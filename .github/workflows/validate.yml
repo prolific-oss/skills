@@ -1,0 +1,85 @@
+name: Validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  commitlint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: Lint commit messages
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          set -euo pipefail
+          pattern='^(feat|fix|docs|refactor|test|chore|ci|build|perf|style|revert)(\([a-zA-Z0-9_/-]+\))?: .+'
+          errors=0
+          for sha in $(git log --format='%H' "origin/${BASE_REF}..HEAD"); do
+            subject=$(git log -1 --format='%s' "$sha")
+            [[ "$subject" =~ ^Merge\  || "$subject" =~ ^(fixup|squash)!\  ]] && continue
+            if ! [[ "$subject" =~ $pattern ]]; then
+              echo "::error::Invalid commit message: $subject"
+              errors=$((errors + 1))
+            fi
+          done
+          [[ $errors -gt 0 ]] && exit 1 || exit 0
+
+  validate-skills:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Validate skill frontmatter
+        run: python3 scripts/validate_skills.py
+
+  validate-marketplace:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: Check release label
+        id: label
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          if gh pr view "${PR_NUMBER}" --repo "${REPO}" \
+              --json labels -q '.labels[].name' | grep -Fxq 'release'; then
+            echo "strict=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "strict=false" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Validate marketplace.json
+        env:
+          STRICT: ${{ steps.label.outputs.strict }}
+        run: |
+          if [ "${STRICT}" = "true" ]; then
+            python3 scripts/validate_marketplace.py --strict
+          else
+            python3 scripts/validate_marketplace.py
+          fi
+
+  require-release-label:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v5
+      - name: Require release label on skill-touching PRs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: python3 scripts/require_release_label.py
