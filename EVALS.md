@@ -5,7 +5,7 @@ Evals measure whether a skill actually improves agent behaviour. Each skill's ev
 ## Structure
 
 ```
-skills/evals/
+evals/
 ├── pyproject.toml                   # shared dependencies (uv)
 ├── _cache/                          # downloaded Prolific CLI binaries (gitignored)
 ├── _shared/
@@ -22,7 +22,7 @@ skills/evals/
 
 1. **Load dataset** — `evals.json` is read and synced to a Langfuse Dataset. Each item has a `prompt` and a list of `assertions`.
 
-2. **Inject the skill (or not)** — for the "with skill" experiment, the skill's markdown file is written to `CLAUDE.md` in a temp directory. The agent reads it as project context. For "without skill", that file is absent.
+2. **Inject the skill (or not)** — for the "with skill" experiment, the skill's `SKILL.md` is written to `CLAUDE.md` in a temp directory. The agent reads it as project context. For "without skill", that file is absent.
 
 3. **Run the agent** — `runner.py` spins up a Claude Code agent via the Claude Agent SDK in the temp directory. The agent has the Prolific CLI on its `PATH` and a Prolific token in its environment; Langfuse credentials are blanked so the subprocess doesn't emit its own orphaned traces.
 
@@ -48,10 +48,10 @@ skills/evals/
 
 ## Adding a new skill eval
 
-1. Create `skills/evals/<skill-name>/evals.json` with prompts and assertions.
-2. Create `skills/evals/<skill-name>/run_evals.py` — copy `recommend-study-filters/run_evals.py` as a template and update `SKILL_PATH` and `EVALS_PATH`.
+1. Create `evals/<skill-name>/evals.json` with prompts and assertions.
+2. Create `evals/<skill-name>/run_evals.py` — copy `recommend-study-filters/run_evals.py` as a template and update `SKILL_PATH` (point at `skills/<skill-name>/SKILL.md`) and `EVALS_PATH`.
 3. Add a `.env.example` alongside it (copy and adjust the existing one).
-4. Run with: `uv run <skill-name>/run_evals.py --both` from `skills/evals/`.
+4. Run with: `uv run <skill-name>/run_evals.py --both` from `evals/`.
 
 ### Eval file structure
 
@@ -85,7 +85,7 @@ Example:
 
 ### First-time setup
 
-Sign up for [Langfuse](https://cloud.langfuse.com/) and create a project. Then copy `.env.example` to `.env` in `skills/evals/recommend-study-filters/` and set:
+Sign up for [Langfuse](https://cloud.langfuse.com/) and create a project. Then copy `.env.example` to `.env` in `evals/recommend-study-filters/` and set:
 
 - `ANTHROPIC_API_KEY`
 - `PROLIFIC_TEST_TOKEN`
@@ -95,7 +95,7 @@ Sign up for [Langfuse](https://cloud.langfuse.com/) and create a project. Then c
 ### Run
 
 ```bash
-cd skills/evals
+cd evals
 
 uv run recommend-study-filters/run_evals.py           # with skill (default)
 uv run recommend-study-filters/run_evals.py --without-skill
