@@ -2,7 +2,7 @@
   "name": "prolific",
   "owner": { "name": "Prolific", "url": "https://prolific.com" },
   "metadata": {
-    "description": "Official skills from Prolific for AI research and workflows",
+    "description": "Official skills from Prolific for AI research and workflows (test 2f marker)",
     "version": "0.1.0"
   },
   "plugins": [

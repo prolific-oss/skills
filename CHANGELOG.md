@@ -11,4 +11,4 @@ controls), see [DEVELOPMENT.md](./DEVELOPMENT.md#the-three-versions-that-move-to
 
 ### recommend-study-filters
 
-- [feat] Initial release: given a description of a target participant population, fetches all available Prolific filters and recommends the best matching combination with filter IDs and values ready to use
+- [feat] Initial release: given a description of a target participant population, fetches all available Prolific filters and recommends the best matching combination with filter IDs and values ready to use <!-- test 2f marker -->
