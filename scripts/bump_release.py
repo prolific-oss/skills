@@ -6,8 +6,9 @@ Usage:
 
 Edits (in-place, leaves them uncommitted for the contributor to review):
   - .claude-plugin/marketplace.json: metadata.version + plugins[0].version → X.Y.Z
-  - skills/<changed>.md frontmatter: version: → X.Y.Z (every skill modified
-    since the last release tag, or every skill if no tag exists yet)
+  - skills/<changed>/SKILL.md frontmatter: version: → X.Y.Z (every skill
+    whose folder was touched since the last release tag, or every skill
+    if no tag exists yet)
   - CHANGELOG.md: prepends a new `## X.Y.Z` section stubbed from git-cliff
     output (falls back to a manual-fill stub if git-cliff is not installed
     or no tag exists yet)
@@ -52,9 +53,15 @@ def last_tag() -> str | None:
 
 
 def changed_skill_files(since: str | None) -> list[Path]:
+    """Return SKILL.md paths for skill folders touched since `since`.
+
+    A "touched skill" is any skill folder containing at least one file
+    in the diff against `since`. Multiple files in the same folder
+    collapse to a single SKILL.md to bump.
+    """
     if since:
         result = subprocess.run(
-            ["git", "diff", "--name-only", since, "--", "skills/*.md"],
+            ["git", "diff", "--name-only", since, "--", "skills/"],
             capture_output=True,
             text=True,
             check=False,
@@ -62,9 +69,16 @@ def changed_skill_files(since: str | None) -> list[Path]:
         )
         if result.returncode != 0:
             die(f"git diff failed: {result.stderr.strip()}")
-        paths = [ROOT / p for p in result.stdout.splitlines() if p]
-        return [p for p in paths if p.exists() and "evals/" not in str(p)]
-    return [p for p in SKILLS_DIR.glob("*.md") if p.is_file()]
+        skill_mds: set[Path] = set()
+        for line in result.stdout.splitlines():
+            parts = line.split("/")
+            if len(parts) < 2 or parts[0] != "skills":
+                continue
+            skill_md = SKILLS_DIR / parts[1] / "SKILL.md"
+            if skill_md.exists():
+                skill_mds.add(skill_md)
+        return sorted(skill_mds)
+    return sorted(p for p in SKILLS_DIR.glob("*/SKILL.md") if p.is_file())
 
 
 def bump_marketplace(version: str) -> None:

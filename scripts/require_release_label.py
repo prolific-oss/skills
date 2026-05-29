@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Require the `release` label on PRs that touch skills/*.md files.
+"""Require the `release` label on PRs that touch skill folders.
 
 Reads the PR's labels and changed files via `gh pr view`, then:
-  - If any changed file is under skills/ (excluding skills/evals/),
-    the PR MUST carry the `release` label.
+  - If any changed file lives under skills/<name>/ (any file at any
+    depth within a skill folder), the PR MUST carry the `release`
+    label.
   - If no skill files changed, the check passes silently.
 
 Args from env (set by the workflow): PR_NUMBER, REPO, GH_TOKEN.
@@ -34,11 +35,11 @@ def gh_pr_view(pr_number: str, repo: str, fields: str) -> dict:
 
 
 def is_skill_file(path: str) -> bool:
-    if not path.startswith("skills/"):
-        return False
-    if path.startswith("skills/evals/"):
-        return False
-    return path.endswith(".md")
+    # A "skill change" is any file under a skill folder (skills/<name>/...).
+    # The whole folder is the release unit, so a script or reference doc
+    # change counts as much as a SKILL.md change.
+    parts = path.split("/")
+    return len(parts) >= 3 and parts[0] == "skills"
 
 
 def main() -> int:
