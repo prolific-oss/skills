@@ -66,3 +66,5 @@ Format the selected values in the JSON structure used by the Prolific API so the
 - Range filter: `{ "filter_id": "...", "selected_range": { "lower": X, "upper": Y } }`
 
 If any stated requirement could not be matched to an available filter, say so explicitly and suggest the closest alternative or a workaround.
+
+<!-- test PR for require-release-label gate -->
