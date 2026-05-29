@@ -7,6 +7,12 @@ the corresponding section below.
 For the versioning model (why three places move together, what each
 controls), see [DEVELOPMENT.md](./DEVELOPMENT.md#the-three-versions-that-move-together).
 
+## 0.3.0
+
+### recommend-study-filters
+
+- [feat] Deliberate test entry to trigger the version-mismatch gate
+
 ## 0.1.0
 
 ### recommend-study-filters
