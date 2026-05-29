@@ -100,16 +100,18 @@ def bump_skill(path: Path, version: str) -> bool:
 
 
 def stub_changelog(version: str, since: str | None) -> str:
-    cliff = subprocess.run(
+    cmd = (
         ["git-cliff", f"{since}..HEAD", "--tag", f"v{version}", "--strip", "header"]
         if since
-        else ["git-cliff", "--tag", f"v{version}", "--strip", "header"],
-        capture_output=True,
-        text=True,
-        check=False,
-        cwd=ROOT,
+        else ["git-cliff", "--tag", f"v{version}", "--strip", "header"]
     )
-    if cliff.returncode == 0 and cliff.stdout.strip():
+    try:
+        cliff = subprocess.run(
+            cmd, capture_output=True, text=True, check=False, cwd=ROOT
+        )
+    except FileNotFoundError:
+        cliff = None
+    if cliff is not None and cliff.returncode == 0 and cliff.stdout.strip():
         body = cliff.stdout.strip()
     else:
         body = "### <skill-name>\n\n- [feat|fix] <describe the change>"
