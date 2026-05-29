@@ -184,12 +184,13 @@ get no update and we'd ship a silent no-op release.
 
 ## Prerequisites for the Release Pipeline
 
-These are configured once on the GitHub repo (not via code):
+A one-time setup on the GitHub repo (not via code):
 
 - A `release` label exists on the repo (used to gate `create-release.yml`)
-- A `main` GitHub Environment exists with a `REPO_CONTENTS_WRITE`
-  secret (a PAT with `contents: write` scope), used by
-  `create-release.yml` to push the tag and create the GitHub Release
+
+The release workflow uses the default `GITHUB_TOKEN` with an explicit
+`contents: write` permission on the release job — no PAT or GitHub
+Environment setup is required.
 
 ## Release Channels (Future)
 

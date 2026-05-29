@@ -45,7 +45,6 @@ jobs:
     needs: should-release
     if: needs.should-release.outputs.release == 'true'
     runs-on: ubuntu-latest
-    environment: main
     permissions:
       contents: write
     outputs:
@@ -55,7 +54,6 @@ jobs:
         with:
           ref: ${{ github.sha }}
           fetch-depth: 0
-          token: ${{ secrets.REPO_CONTENTS_WRITE }}
 
       - name: Extract version from CHANGELOG
         id: version
@@ -89,7 +87,7 @@ jobs:
 
       - name: Create tag and GitHub Release
         env:
-          GH_TOKEN: ${{ secrets.REPO_CONTENTS_WRITE }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ steps.version.outputs.tag }}
         run: |
           set -euo pipefail
