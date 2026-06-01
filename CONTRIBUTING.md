@@ -19,7 +19,7 @@ mechanics — see [DEVELOPMENT.md](DEVELOPMENT.md).
 
 This repo ships releases per merge, not in scheduled batches. The rule is simple:
 
-- **If your PR changes any file under `skills/`** (excluding `skills/evals/`), it **is** a release. Add the `release` label.
+- **If your PR changes any file under `skills/`** (each skill lives in its own folder; the whole folder is the release unit), it **is** a release. Add the `release` label.
 - **If your PR is pure docs, CI, scripts, or repo-chore work**, it is not a release. Do not add the label.
 
 When your PR is a release, you must update **three** things in the same PR:

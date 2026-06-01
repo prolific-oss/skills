@@ -7,6 +7,12 @@ the corresponding section below.
 For the versioning model (why three places move together, what each
 controls), see [DEVELOPMENT.md](./DEVELOPMENT.md#the-three-versions-that-move-together).
 
+## 0.1.1
+
+### recommend-study-filters
+
+- [refactor] Restructure to the agentskills.io folder convention: the skill now lives at `skills/recommend-study-filters/SKILL.md` (was `skills/recommend-study-filters.md`). No behavior change.
+
 ## 0.1.0
 
 ### recommend-study-filters

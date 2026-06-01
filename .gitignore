@@ -19,11 +19,11 @@ __pycache__/
 .venv/
 
 # Eval binary cache — downloaded at runtime by sandbox.py
-skills/evals/_cache/*
-!skills/evals/_cache/.gitkeep
+evals/_cache/*
+!evals/_cache/.gitkeep
 
 # Misc
 notes.md
 
-skills/evals/*/.env
-skills/evals/*/.env.local
+evals/*/.env
+evals/*/.env.local

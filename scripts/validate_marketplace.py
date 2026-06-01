@@ -48,10 +48,10 @@ def validate_always(data: dict) -> list[str]:
         )
         for skill_path in plugin.get("skills", []):
             resolved = (ROOT / skill_path.lstrip("./")).resolve()
-            md_file = resolved.with_suffix(".md")
-            if not md_file.exists():
+            skill_md = resolved / "SKILL.md"
+            if not skill_md.exists():
                 errors.append(
-                    f"plugins[{i}].skills: '{skill_path}' does not resolve to {md_file.relative_to(ROOT)}"
+                    f"plugins[{i}].skills: '{skill_path}' does not resolve to {skill_md.relative_to(ROOT)}"
                 )
 
     return errors

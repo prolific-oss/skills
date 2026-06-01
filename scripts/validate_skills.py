@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Validate skill frontmatter.
 
-Each skill file under skills/*.md (excluding skills/evals/) must have
-top-of-file YAML frontmatter with name, description, and a valid
-semver version.
+Each skill lives in skills/<name>/SKILL.md (per the agentskills.io
+convention). Every SKILL.md must have top-of-file YAML frontmatter
+with name, description, and a valid semver version.
 
 Exits non-zero on any failure with a clear per-file error.
 """
@@ -40,7 +40,7 @@ def parse_frontmatter(text: str) -> dict[str, str] | None:
 
 
 def iter_skill_files() -> list[Path]:
-    return sorted(p for p in SKILLS_DIR.glob("*.md") if p.is_file())
+    return sorted(p for p in SKILLS_DIR.glob("*/SKILL.md") if p.is_file())
 
 
 def validate_one(path: Path) -> list[str]:

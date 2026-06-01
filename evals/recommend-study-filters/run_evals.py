@@ -43,7 +43,7 @@ from _shared.judge import grade_assertions  # noqa: E402
 from _shared.runner import run_claude_code  # noqa: E402
 from _shared.sandbox import build_agent_env, ensure_prolific_binary  # noqa: E402
 
-SKILL_PATH = Path(__file__).parents[2] / "recommend-study-filters.md"
+SKILL_PATH = Path(__file__).parents[2] / "skills" / "recommend-study-filters" / "SKILL.md"
 EVALS_PATH = Path(__file__).parent / "evals.json"
 
 JUDGE_MODEL = "claude-haiku-4-5-20251001"

@@ -47,7 +47,7 @@ Every release bumps the same SemVer in three places:
 | --------------------------- | -------------------------------------------------------- | ---------------------------------------------------------------------- |
 | `metadata.version`          | `.claude-plugin/marketplace.json` (root)                 | Whether `/plugin marketplace update` re-pulls the catalog              |
 | Plugin entry `version`      | `.claude-plugin/marketplace.json` (`plugins[*].version`) | Whether `/plugin update` refreshes the installed plugin for users      |
-| Skill frontmatter `version` | `skills/<name>.md` (top-level YAML)                      | Contributor signal + changelog grouping. **Claude Code ignores this.** |
+| Skill frontmatter `version` | `skills/<name>/SKILL.md` (top-level YAML)                | Contributor signal + changelog grouping. **Claude Code ignores this.** |
 
 Why all three move together:
 
