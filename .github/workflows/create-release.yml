@@ -34,9 +34,22 @@ jobs:
           release=false
           for sha in "${candidates[@]}"; do
             [ -z "$sha" ] && continue
-            result=$(gh api \
-              "repos/${REPO}/commits/${sha}/pulls" \
-              --jq 'any(.[]; (.labels // []) | map(.name) | index("release") != null)')
+            # The commit->PR association is eventually consistent: right
+            # after a merge, this endpoint can briefly return no PRs, which
+            # would make us skip a release that was correctly labelled.
+            # Retry with backoff until an association appears (or we give up).
+            result=false
+            for attempt in 1 2 3 4 5; do
+              pulls=$(gh api "repos/${REPO}/commits/${sha}/pulls")
+              result=$(printf '%s' "$pulls" \
+                | jq 'any(.[]; (.labels // []) | map(.name) | index("release") != null)')
+              [ "$result" = "true" ] && break
+              # Stop retrying once a PR is associated but simply unlabelled;
+              # only the empty (still-indexing) case is worth waiting on.
+              count=$(printf '%s' "$pulls" | jq 'length')
+              [ "$count" -gt 0 ] && break
+              sleep $((attempt * 3))
+            done
             [ "$result" = "true" ] && release=true && break
           done
           echo "release=${release}" >> "$GITHUB_OUTPUT"
