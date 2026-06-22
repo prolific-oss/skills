@@ -32,6 +32,28 @@ jobs:
             mapfile -t candidates < <(jq -r '.commits[].id' "$GITHUB_EVENT_PATH")
           fi
           release=false
+
+          # Fast, race-free path: merge and squash commits name their PR
+          # in the subject ("Merge pull request #N ..." / "... (#N)"). A
+          # PR's labels are immediately consistent, unlike the commit->PR
+          # association queried below, so resolve via the PR number when we
+          # can. The subject is read from the event payload (not a ${{ }}
+          # expansion) and only a numeric id is extracted, so it is safe to
+          # interpolate into the API path.
+          SUBJECT=$(jq -r '.head_commit.message // ""' "$GITHUB_EVENT_PATH" | head -n1)
+          PR_NUM=$(printf '%s' "$SUBJECT" | sed -nE 's/^Merge pull request #([0-9]+) .*/\1/p')
+          if [ -z "$PR_NUM" ]; then
+            PR_NUM=$(printf '%s' "$SUBJECT" | sed -nE 's/.*\(#([0-9]+)\)[[:space:]]*$/\1/p')
+          fi
+          if [ -n "$PR_NUM" ]; then
+            result=$(gh api "repos/${REPO}/pulls/${PR_NUM}" \
+              --jq '(.labels // []) | map(.name) | index("release") != null')
+            [ "$result" = "true" ] && release=true
+          fi
+
+          # Fallback (e.g. rebase merges with no PR reference in the
+          # subject): resolve via the commit->PR association below.
+          if [ "$release" != "true" ]; then
           for sha in "${candidates[@]}"; do
             [ -z "$sha" ] && continue
             # The commit->PR association is eventually consistent: right
@@ -52,6 +74,7 @@ jobs:
             done
             [ "$result" = "true" ] && release=true && break
           done
+          fi
           echo "release=${release}" >> "$GITHUB_OUTPUT"
 
   finalize-release:
