@@ -37,9 +37,9 @@ jobs:
           # in the subject ("Merge pull request #N ..." / "... (#N)"). A
           # PR's labels are immediately consistent, unlike the commit->PR
           # association queried below, so resolve via the PR number when we
-          # can. The subject is read from the event payload (not a ${{ }}
-          # expansion) and only a numeric id is extracted, so it is safe to
-          # interpolate into the API path.
+          # can. The subject is read from the event payload via jq (not an
+          # Actions template expression) and only a numeric id is extracted,
+          # so it is safe to interpolate into the API path.
           MSG=$(jq -r '.head_commit.message // ""' "$GITHUB_EVENT_PATH")
           SUBJECT=${MSG%%$'\n'*}
           PR_NUM=$(printf '%s' "$SUBJECT" | sed -nE 's/^Merge pull request #([0-9]+) .*/\1/p')
