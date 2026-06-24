@@ -34,6 +34,20 @@ jobs:
           done
           [[ $errors -gt 0 ]] && exit 1 || exit 0
 
+  actionlint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install actionlint
+        run: |
+          go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.12
+          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+      - name: Lint workflow files
+        # Validates workflow structure and ${{ }} expressions (and shells
+        # the run: blocks through the preinstalled shellcheck). Catches
+        # errors GitHub only surfaces as a startup failure after merge.
+        run: actionlint -color
+
   validate-skills:
     runs-on: ubuntu-latest
     steps:
