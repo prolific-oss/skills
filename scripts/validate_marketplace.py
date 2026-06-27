@@ -164,28 +164,72 @@ def tag_exists(version: str) -> bool:
     return bool(result.stdout.strip())
 
 
+def last_tag() -> str | None:
+    result = subprocess.run(
+        ["git", "describe", "--tags", "--abbrev=0", "--match", "v[0-9]*"],
+        capture_output=True,
+        text=True,
+        check=False,
+        cwd=ROOT,
+    )
+    return result.stdout.strip() if result.returncode == 0 else None
+
+
+def changed_skill_folders(since: str | None) -> set[str]:
+    """Skill folder names touched since `since` (all of them if no tag yet)."""
+    if since is None:
+        return {p.parent.name for p in (ROOT / "skills").glob("*/SKILL.md")}
+    result = subprocess.run(
+        ["git", "diff", "--name-only", since, "--", "skills/"],
+        capture_output=True,
+        text=True,
+        check=False,
+        cwd=ROOT,
+    )
+    if result.returncode != 0:
+        sys.exit(f"error: git diff failed: {result.stderr.strip()}")
+    folders: set[str] = set()
+    for line in result.stdout.splitlines():
+        parts = line.split("/")
+        if len(parts) >= 2 and parts[0] == "skills":
+            folders.add(parts[1])
+    return folders
+
+
+def plugin_versions_at(tag: str | None) -> dict[str, str]:
+    """Map plugin name -> version in marketplace.json at `tag` (empty if none)."""
+    if tag is None:
+        return {}
+    result = subprocess.run(
+        ["git", "show", f"{tag}:.claude-plugin/marketplace.json"],
+        capture_output=True,
+        text=True,
+        check=False,
+        cwd=ROOT,
+    )
+    if result.returncode != 0:
+        return {}
+    try:
+        data = json.loads(result.stdout)
+    except json.JSONDecodeError:
+        return {}
+    return {
+        p.get("name", ""): p.get("version", "")
+        for p in data.get("plugins", [])
+        if p.get("name")
+    }
+
+
 def validate_strict(data: dict) -> list[str]:
-    errors: list[str] = []
-    metadata_version = data.get("metadata", {}).get("version", "")
-    plugins = data.get("plugins", [])
-    plugin_version = plugins[0].get("version", "") if plugins else ""
+    since = last_tag()
     changelog_version = read_top_changelog_version()
-
-    if metadata_version != changelog_version:
-        errors.append(
-            f"metadata.version ({metadata_version}) != top CHANGELOG version ({changelog_version})"
-        )
-    if plugin_version != changelog_version:
-        errors.append(
-            f"plugins[0].version ({plugin_version}) != top CHANGELOG version ({changelog_version})"
-        )
-
-    if tag_exists(changelog_version):
-        errors.append(
-            f"tag v{changelog_version} already exists; rebase on main and bump to the next version"
-        )
-
-    return errors
+    return strict_errors(
+        data,
+        changelog_version,
+        plugin_versions_at(since),
+        changed_skill_folders(since),
+        tag_already_exists=tag_exists(changelog_version),
+    )
 
 
 def main() -> int:
