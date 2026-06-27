@@ -7,8 +7,11 @@ Always checks:
   - every skill listed under plugins[*].skills resolves to an existing file
 
 With --strict (used on release-labelled PRs), additionally checks:
-  - metadata.version == plugins[0].version == top CHANGELOG version
+  - metadata.version == top CHANGELOG version
   - v<version> does not already exist as a git tag
+  - every plugin whose skills changed since the last tag has a version
+    strictly greater than its version at that tag; every plugin whose
+    skills did not change keeps its previous version (no phantom bumps)
 
 Exits non-zero on any failure with a clear per-issue error.
 """
@@ -54,6 +57,86 @@ def validate_always(data: dict) -> list[str]:
                     f"plugins[{i}].skills: '{skill_path}' does not resolve to {skill_md.relative_to(ROOT)}"
                 )
 
+    return errors
+
+
+def skill_folder_name(skill_path: str) -> str:
+    """'./skills/whoami' -> 'whoami'."""
+    return skill_path.rstrip("/").split("/")[-1]
+
+
+def plugin_skill_folders(plugin: dict) -> set[str]:
+    """Folder names a plugin owns, from its `skills` list."""
+    return {skill_folder_name(s) for s in plugin.get("skills", [])}
+
+
+def parse_semver(value: str) -> tuple[int, int, int]:
+    """Numeric (major, minor, patch) core for ordering; (-1,-1,-1) if unparsable."""
+    if not value or not SEMVER.match(value):
+        return (-1, -1, -1)
+    core = value.split("-", 1)[0]
+    major, minor, patch = (int(part) for part in core.split("."))
+    return (major, minor, patch)
+
+
+def plugin_bump_errors(
+    data: dict,
+    prev_versions: dict[str, str],
+    changed_folders: set[str],
+) -> list[str]:
+    """Each plugin's own semver moves only with its own skills (Model B).
+
+    - A plugin whose skills changed must be strictly greater than its
+      version at the last tag.
+    - A plugin whose skills did not change must keep that previous version,
+      so Claude Code does not re-deliver an unchanged plugin.
+    - A plugin with no previous version (newly added this release) is only
+      required to be valid semver, which `validate_always` already checks.
+    """
+    errors: list[str] = []
+    for i, plugin in enumerate(data.get("plugins", [])):
+        name = plugin.get("name", f"plugins[{i}]")
+        version = plugin.get("version", "")
+        prev = prev_versions.get(name)
+        if prev is None:
+            continue
+        changed = bool(plugin_skill_folders(plugin) & changed_folders)
+        if changed:
+            if parse_semver(version) <= parse_semver(prev):
+                errors.append(
+                    f"plugin '{name}' has changed skills since the last release "
+                    f"but its version ('{version}') is not greater than its "
+                    f"previous version ('{prev}'); bump it (run `make release "
+                    f"VERSION=<train>` and adjust the suggested per-plugin bump)"
+                )
+        elif version != prev:
+            errors.append(
+                f"plugin '{name}' has no skill changes since the last release "
+                f"but its version moved ('{prev}' -> '{version}'); revert it so "
+                f"unchanged plugins are not re-delivered to users"
+            )
+    return errors
+
+
+def strict_errors(
+    data: dict,
+    changelog_version: str,
+    prev_versions: dict[str, str],
+    changed_folders: set[str],
+    tag_already_exists: bool,
+) -> list[str]:
+    """Pure core of the strict checks — no git, no filesystem."""
+    errors: list[str] = []
+    metadata_version = data.get("metadata", {}).get("version", "")
+    if metadata_version != changelog_version:
+        errors.append(
+            f"metadata.version ({metadata_version}) != top CHANGELOG version ({changelog_version})"
+        )
+    if tag_already_exists:
+        errors.append(
+            f"tag v{changelog_version} already exists; rebase on main and bump to the next version"
+        )
+    errors.extend(plugin_bump_errors(data, prev_versions, changed_folders))
     return errors
 
 
