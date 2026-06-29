@@ -4,8 +4,9 @@ All notable changes to `prolific/skills` are listed here. Each
 release cuts a `vX.Y.Z` git tag and a GitHub Release whose body is
 the corresponding section below.
 
-For the versioning model (why three places move together, what each
-controls), see [DEVELOPMENT.md](./DEVELOPMENT.md#the-three-versions-that-move-together).
+For the versioning model (the release-train number vs. independent
+per-plugin versions), see
+[DEVELOPMENT.md](./DEVELOPMENT.md#how-the-versions-move).
 
 ## 0.2.0
 
