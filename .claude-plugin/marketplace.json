@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Official skills from Prolific for AI research and workflows",
-    "version": "0.2.0"
+    "version": "0.3.0"
   },
   "plugins": [
     {
@@ -17,6 +17,19 @@
       "version": "0.2.0",
       "skills": [
         "./skills/recommend-study-filters",
+        "./skills/whoami"
+      ],
+      "author": {
+        "name": "Prolific"
+      }
+    },
+    {
+      "name": "prolific-skills",
+      "description": "Skills for AI assisted research and workflows",
+      "source": "./",
+      "strict": false,
+      "version": "0.1.0",
+      "skills": [
         "./skills/whoami"
       ],
       "author": {
