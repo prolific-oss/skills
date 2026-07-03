@@ -8,6 +8,12 @@ For the versioning model (the release-train number vs. independent
 per-plugin versions), see
 [DEVELOPMENT.md](./DEVELOPMENT.md#how-the-versions-move).
 
+## 0.3.0
+
+### New plugin: adds new prolific skills plugin, aside from the current beta skills plugin, to hold well evaluated skills.
+
+- [feat|fix] <describe the change>
+
 ## 0.2.0
 
 ### whoami
