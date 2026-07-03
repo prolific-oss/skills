@@ -22,6 +22,19 @@
       "author": {
         "name": "Prolific"
       }
+    },
+    {
+      "name": "prolific-skills",
+      "description": "Skills for AI assisted research and workflows",
+      "source": "./",
+      "strict": false,
+      "version": "0.1.0",
+      "skills": [
+        "./skills/whoami"
+      ],
+      "author": {
+        "name": "Prolific"
+      }
     }
   ]
 }
