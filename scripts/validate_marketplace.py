@@ -3,15 +3,17 @@
 
 Always checks:
   - metadata.version is valid semver
-  - every plugins[*].version is valid semver
+  - every plugin has a name and a valid-semver version
   - every skill listed under plugins[*].skills resolves to an existing file
 
 With --strict (used on release-labelled PRs), additionally checks:
   - metadata.version == top CHANGELOG version
   - v<version> does not already exist as a git tag
-  - every plugin whose skills changed since the last tag has a version
+  - every plugin whose skills changed since the last tag (a skill file
+    changed, or its skill set changed vs the last tag) has a version
     strictly greater than its version at that tag; every plugin whose
     skills did not change keeps its previous version (no phantom bumps)
+  - fails closed if the previous tag's manifest cannot be loaded
 
 Exits non-zero on any failure with a clear per-issue error.
 """
@@ -27,7 +29,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 MARKETPLACE = ROOT / ".claude-plugin" / "marketplace.json"
-SEMVER = re.compile(r"^\d+\.\d+\.\d+(-[A-Za-z0-9.-]+)?$")
+# Plain X.Y.Z only. Prerelease suffixes are disallowed so numeric-core
+# comparison (parse_semver) is always correct and bumps never silently
+# strip a suffix.
+SEMVER = re.compile(r"^\d+\.\d+\.\d+$")
 
 
 def err(msg: str) -> None:
@@ -46,6 +51,8 @@ def validate_always(data: dict) -> list[str]:
     validate_semver(metadata.get("version", ""), "metadata.version", errors)
 
     for i, plugin in enumerate(data.get("plugins", [])):
+        if not plugin.get("name"):
+            errors.append(f"plugins[{i}]: missing required 'name'")
         validate_semver(
             plugin.get("version", ""), f"plugins[{i}].version", errors
         )
@@ -71,49 +78,57 @@ def plugin_skill_folders(plugin: dict) -> set[str]:
 
 
 def parse_semver(value: str) -> tuple[int, int, int]:
-    """Numeric (major, minor, patch) core for ordering; (-1,-1,-1) if unparsable."""
+    """(major, minor, patch) for ordering; (-1,-1,-1) if not plain X.Y.Z."""
     if not value or not SEMVER.match(value):
         return (-1, -1, -1)
-    core = value.split("-", 1)[0]
-    major, minor, patch = (int(part) for part in core.split("."))
+    major, minor, patch = (int(part) for part in value.split("."))
     return (major, minor, patch)
+
+
+def plugin_changed(plugin: dict, prev: dict, changed_folders: set[str]) -> bool:
+    """A plugin changed if one of its skill files changed OR its skill set
+    differs from the last tag (e.g. a skill moved in/out via the manifest)."""
+    folders = plugin_skill_folders(plugin)
+    return bool(folders & changed_folders) or folders != prev.get("folders", set())
 
 
 def plugin_bump_errors(
     data: dict,
-    prev_versions: dict[str, str],
+    prev_plugins: dict[str, dict],
     changed_folders: set[str],
 ) -> list[str]:
-    """Each plugin's own semver moves only with its own skills (Model B).
+    """Each plugin's own semver moves only with its own content (Model B).
 
-    - A plugin whose skills changed must be strictly greater than its
-      version at the last tag.
-    - A plugin whose skills did not change must keep that previous version,
-      so Claude Code does not re-deliver an unchanged plugin.
-    - A plugin with no previous version (newly added this release) is only
+    - A plugin that changed (a skill file changed, or its skill set changed
+      vs the last tag) must be strictly greater than its previous version.
+    - A plugin that did not change must keep that previous version, so
+      Claude Code does not re-deliver an unchanged plugin.
+    - A plugin with no previous entry (newly added this release) is only
       required to be valid semver, which `validate_always` already checks.
+
+    `prev_plugins` maps plugin name -> {"version": str, "folders": set[str]}.
     """
     errors: list[str] = []
     for i, plugin in enumerate(data.get("plugins", [])):
         name = plugin.get("name", f"plugins[{i}]")
         version = plugin.get("version", "")
-        prev = prev_versions.get(name)
+        prev = prev_plugins.get(name)
         if prev is None:
             continue
-        changed = bool(plugin_skill_folders(plugin) & changed_folders)
-        if changed:
-            if parse_semver(version) <= parse_semver(prev):
+        prev_version = prev.get("version", "")
+        if plugin_changed(plugin, prev, changed_folders):
+            if parse_semver(version) <= parse_semver(prev_version):
                 errors.append(
-                    f"plugin '{name}' has changed skills since the last release "
+                    f"plugin '{name}' has changed since the last release "
                     f"but its version ('{version}') is not greater than its "
-                    f"previous version ('{prev}'); bump it (run `make release "
-                    f"VERSION=<train>` and adjust the suggested per-plugin bump)"
+                    f"previous version ('{prev_version}'); bump it (run `make "
+                    f"release VERSION=<train>` and adjust the suggested bump)"
                 )
-        elif version != prev:
+        elif version != prev_version:
             errors.append(
-                f"plugin '{name}' has no skill changes since the last release "
-                f"but its version moved ('{prev}' -> '{version}'); revert it so "
-                f"unchanged plugins are not re-delivered to users"
+                f"plugin '{name}' has no changes since the last release "
+                f"but its version moved ('{prev_version}' -> '{version}'); "
+                f"revert it so unchanged plugins are not re-delivered to users"
             )
     return errors
 
@@ -121,7 +136,7 @@ def plugin_bump_errors(
 def strict_errors(
     data: dict,
     changelog_version: str,
-    prev_versions: dict[str, str],
+    prev_plugins: dict[str, dict],
     changed_folders: set[str],
     tag_already_exists: bool,
 ) -> list[str]:
@@ -136,7 +151,7 @@ def strict_errors(
         errors.append(
             f"tag v{changelog_version} already exists; rebase on main and bump to the next version"
         )
-    errors.extend(plugin_bump_errors(data, prev_versions, changed_folders))
+    errors.extend(plugin_bump_errors(data, prev_plugins, changed_folders))
     return errors
 
 
@@ -196,8 +211,13 @@ def changed_skill_folders(since: str | None) -> set[str]:
     return folders
 
 
-def plugin_versions_at(tag: str | None) -> dict[str, str]:
-    """Map plugin name -> version in marketplace.json at `tag` (empty if none)."""
+def plugins_at(tag: str | None) -> dict[str, dict] | None:
+    """Map plugin name -> {"version", "folders"} in marketplace.json at `tag`.
+
+    Returns {} when `tag` is None (no previous release). Returns None to
+    signal a load failure (git show or JSON parse) so callers can fail
+    closed rather than silently skipping the per-plugin invariant.
+    """
     if tag is None:
         return {}
     result = subprocess.run(
@@ -208,13 +228,16 @@ def plugin_versions_at(tag: str | None) -> dict[str, str]:
         cwd=ROOT,
     )
     if result.returncode != 0:
-        return {}
+        return None
     try:
         data = json.loads(result.stdout)
     except json.JSONDecodeError:
-        return {}
+        return None
     return {
-        p.get("name", ""): p.get("version", "")
+        p["name"]: {
+            "version": p.get("version", ""),
+            "folders": plugin_skill_folders(p),
+        }
         for p in data.get("plugins", [])
         if p.get("name")
     }
@@ -223,10 +246,16 @@ def plugin_versions_at(tag: str | None) -> dict[str, str]:
 def validate_strict(data: dict) -> list[str]:
     since = last_tag()
     changelog_version = read_top_changelog_version()
+    prev_plugins = plugins_at(since)
+    if prev_plugins is None:
+        return [
+            f"could not load .claude-plugin/marketplace.json at {since}; "
+            f"cannot verify per-plugin bumps (failing closed)"
+        ]
     return strict_errors(
         data,
         changelog_version,
-        plugin_versions_at(since),
+        prev_plugins,
         changed_skill_folders(since),
         tag_already_exists=tag_exists(changelog_version),
     )
@@ -237,7 +266,7 @@ def main() -> int:
     parser.add_argument(
         "--strict",
         action="store_true",
-        help="Also enforce release-PR invariants (version sync + tag collision)",
+        help="Also enforce release-PR invariants (per-plugin bumps + tag collision)",
     )
     args = parser.parse_args()
 

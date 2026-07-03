@@ -40,7 +40,8 @@ ROOT = Path(__file__).resolve().parent.parent
 MARKETPLACE = ROOT / ".claude-plugin" / "marketplace.json"
 CHANGELOG = ROOT / "CHANGELOG.md"
 SKILLS_DIR = ROOT / "skills"
-SEMVER = re.compile(r"^\d+\.\d+\.\d+(-[A-Za-z0-9.-]+)?$")
+# Plain X.Y.Z only — prerelease suffixes are disallowed (see validate_marketplace).
+SEMVER = re.compile(r"^\d+\.\d+\.\d+$")
 FRONTMATTER_VERSION = re.compile(
     r'(^---\n.*?^version:\s*)(["\']?)([^\n"\']+)(\2)(\s*$)',
     re.MULTILINE | re.DOTALL,
@@ -122,8 +123,8 @@ def folder_severity(folder: str, since: str | None) -> str:
 
 
 def bump_version(version: str, severity: str) -> str:
-    """Increment the semver core by `severity` (pre-1.0: feat→minor, else patch)."""
-    major, minor, patch = (int(x) for x in version.split("-", 1)[0].split("."))
+    """Increment X.Y.Z by `severity` (pre-1.0: feat→minor, else patch)."""
+    major, minor, patch = (int(x) for x in version.split("."))
     if severity == "minor":
         return f"{major}.{minor + 1}.0"
     return f"{major}.{minor}.{patch + 1}"
@@ -137,7 +138,7 @@ def read_skill_version(path: Path) -> str | None:
 def bump_marketplace(
     train: str,
     changed_folders: set[str],
-    prev_versions: dict[str, str],
+    prev_plugins: dict[str, dict],
     severities: dict[str, str],
 ) -> list[tuple[str, str, str]]:
     """Set metadata.version to the train; bump each changed plugin by its own
@@ -149,16 +150,22 @@ def bump_marketplace(
     deltas: list[tuple[str, str, str]] = []
     for plugin in data["plugins"]:
         name = plugin.get("name", "<unnamed>")
-        owned = vm.plugin_skill_folders(plugin) & changed_folders
-        prev = prev_versions.get(name)
-        if not owned or prev is None:
-            # Unchanged plugins, and brand-new plugins (no previous version),
-            # keep their current version so users aren't re-delivered no-ops.
+        prev = prev_plugins.get(name)
+        # Brand-new plugins keep their author-set version; unchanged plugins
+        # (no skill-file change and no skill-set change) are left alone so
+        # users aren't re-delivered no-ops.
+        if prev is None or not vm.plugin_changed(plugin, prev, changed_folders):
             continue
+        owned = vm.plugin_skill_folders(plugin) & changed_folders
         severity = "minor" if any(severities.get(f) == "minor" for f in owned) else "patch"
-        new = bump_version(prev, severity)
+        prev_version = prev.get("version", "")
+        computed = bump_version(prev_version, severity)
+        # Never downgrade: if the contributor already bumped past the
+        # suggestion (or re-ran make release), keep the higher version.
+        current = plugin.get("version", prev_version)
+        new = computed if vm.parse_semver(computed) >= vm.parse_semver(current) else current
         plugin["version"] = new
-        deltas.append((name, prev, new))
+        deltas.append((name, prev_version, new))
     MARKETPLACE.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
     return deltas
 
@@ -221,7 +228,9 @@ def main() -> None:
     changed_files = changed_skill_files(since)
     changed_folders = {p.parent.name for p in changed_files}
     severities = {f: folder_severity(f, since) for f in changed_folders}
-    prev_versions = vm.plugin_versions_at(since)
+    prev_plugins = vm.plugins_at(since)
+    if prev_plugins is None:
+        die(f"could not load marketplace.json at {since}; refusing to bump")
 
     # Bump each existing skill's frontmatter by its own severity. Brand-new
     # skills keep the version their author set in this PR.
@@ -237,7 +246,7 @@ def main() -> None:
         if bump_skill(path, new):
             skill_deltas.append((path, current, new))
 
-    plugin_deltas = bump_marketplace(train, changed_folders, prev_versions, severities)
+    plugin_deltas = bump_marketplace(train, changed_folders, prev_plugins, severities)
     prepend_changelog(train, since, plugin_deltas)
 
     print(f"Bumped marketplace.json metadata.version → {train} (release train)")
