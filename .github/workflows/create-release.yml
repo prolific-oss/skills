@@ -100,22 +100,13 @@ jobs:
           echo "tag=v${VERSION}" >> "$GITHUB_OUTPUT"
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
 
-      - name: Verify marketplace.json matches CHANGELOG
-        env:
-          VERSION: ${{ steps.version.outputs.version }}
-        run: |
-          set -euo pipefail
-          MKT_VERSION=$(jq -r '.metadata.version' .claude-plugin/marketplace.json)
-          PLUGIN_VERSION=$(jq -r '.plugins[0].version' .claude-plugin/marketplace.json)
-          if [ "$MKT_VERSION" != "$VERSION" ]; then
-            echo "::error::marketplace.json metadata.version ($MKT_VERSION) != CHANGELOG version ($VERSION)"
-            exit 1
-          fi
-          if [ "$PLUGIN_VERSION" != "$VERSION" ]; then
-            echo "::error::marketplace.json plugins[0].version ($PLUGIN_VERSION) != CHANGELOG version ($VERSION)"
-            echo "Without bumping the plugin version, Claude Code will not deliver this release to users."
-            exit 1
-          fi
+      - name: Verify marketplace.json (strict)
+        # Reuses the exact invariant enforced on release-labelled PRs:
+        # metadata.version == CHANGELOG top, the tag is not yet taken, and
+        # every plugin whose skills changed since the last tag is bumped
+        # while unchanged plugins are left alone. The checkout above uses
+        # fetch-depth: 0 so last_tag() and the previous manifest resolve.
+        run: python3 scripts/validate_marketplace.py --strict
 
       - name: Extract release notes
         env:
