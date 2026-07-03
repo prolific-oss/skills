@@ -31,7 +31,7 @@ Each filter in the output includes:
 
 ### Step 2: Analyse the researcher's requirements
 
-Read the researcher's description carefully and identify every distinct requirement. Group them by category, for example:
+You must read the researcher's description carefully and identify every distinct requirement. Group them by category, for example:
 
 - **Geographic** — country of residence, nationality
 - **Demographic** — age, gender, ethnicity
