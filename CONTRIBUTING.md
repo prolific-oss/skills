@@ -38,7 +38,7 @@ This runs `scripts/bump_release.py`, which stamps `metadata.version` to
 the train number, bumps the `version` of every changed plugin and skill
 by its own inferred severity (`feat`→minor, else patch), and stubs a
 fresh `## X.Y.Z` section in `CHANGELOG.md` for you to edit. The per-unit
-bumps are *suggestions* — review the diff, adjust any version and the
+bumps are _suggestions_ — review the diff, adjust any version and the
 stub, then commit, push, open the PR, add the `release` label. See
 [How The Versions Move](DEVELOPMENT.md#how-the-versions-move) for why
 each plugin versions independently.
@@ -81,10 +81,6 @@ fixed stuff                                  # no type, vague description
 feat: Update recommend-study-filters.        # capitalised, trailing period
 FEAT(recommend-study-filters): added step    # uppercase type, past tense
 ```
-
-## Code Review
-
-Expect a review within approximately one week. Feedback is constructive — we're all here to build something great together.
 
 ## License
 
