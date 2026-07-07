@@ -8,6 +8,14 @@ For the versioning model (the release-train number vs. independent
 per-plugin versions), see
 [DEVELOPMENT.md](./DEVELOPMENT.md#how-the-versions-move).
 
+## 0.4.0
+
+_Plugins: prolific-beta-skills 0.2.0→0.2.1_
+
+### New skill: adds demo example create ai taskbuilder collection skill.
+
+- [feat|fix] Provides fodder for the demo
+
 ## 0.3.0
 
 ### New plugin: adds new prolific skills plugin, aside from the current beta skills plugin, to hold well evaluated skills.

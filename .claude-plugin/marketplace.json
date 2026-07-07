@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Official skills from Prolific for AI research and workflows",
-    "version": "0.3.0"
+    "version": "0.4.0"
   },
   "plugins": [
     {
@@ -14,10 +14,11 @@
       "description": "Skills currently being developed and evaluated, made available for experimentation and feedback",
       "source": "./",
       "strict": false,
-      "version": "0.2.0",
+      "version": "0.2.1",
       "skills": [
         "./skills/recommend-study-filters",
-        "./skills/whoami"
+        "./skills/whoami",
+        "./skills/create-ai-task-builder-collection"
       ],
       "author": {
         "name": "Prolific"
