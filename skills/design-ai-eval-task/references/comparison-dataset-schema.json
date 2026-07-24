@@ -1,8 +1,0 @@
-{
-  "strict": false,
-  "fields": {
-    "option_a": { "type": "image_url", "label": "Option A" },
-    "option_b": { "type": "image_url", "label": "Option B" },
-    "context": { "type": "text", "label": "Prompt / context" }
-  }
-}

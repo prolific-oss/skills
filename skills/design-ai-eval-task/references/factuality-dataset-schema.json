@@ -1,7 +1,0 @@
-{
-  "strict": false,
-  "fields": {
-    "claim": { "type": "text", "label": "Claim to verify" },
-    "reference": { "type": "text", "label": "Reference / source context" }
-  }
-}
