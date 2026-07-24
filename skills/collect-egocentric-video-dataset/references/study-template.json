@@ -1,0 +1,34 @@
+{
+  "name": "<study-name>",
+  "project": "<PROJECT_ID>",
+  "description": "<participant-facing description of the activity to record — must end with the fixed hands-in-view / don't-rush sentence required by SKILL.md Step 4>",
+  "internal_name": "<internal-name>",
+  "data_collection_method": "AI_TASK_BUILDER_COLLECTION",
+  "data_collection_id": "<COLLECTION_ID>",
+  "device_compatibility": ["mobile", "desktop"],
+  "peripheral_requirements": ["audio", "camera", "download", "microphone"],
+  "filters": [
+    {
+      "filter_id": "internet-enabled-products",
+      "selected_values": ["20"]
+    }
+  ],
+  "estimated_completion_time": 10,
+  "submissions_config": {
+    "max_submissions_per_participant": 1
+  },
+  "reward": 1000,
+  "total_available_places": 10,
+  "prolific_id_option": "question",
+  "completion_codes": [
+    {
+      "code": "<CODE>",
+      "code_type": "COMPLETED",
+      "actions": [
+        {
+          "action": "MANUALLY_REVIEW"
+        }
+      ]
+    }
+  ]
+}

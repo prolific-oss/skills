@@ -1,0 +1,105 @@
+{
+  "name": "<collection-name>",
+  "workspace_id": "<WORKSPACE_ID>",
+  "task_details": {
+    "task_name": "Point of View (POV) Video Capture",
+    "task_introduction": "<p>Help us build a video dataset by submitting short point of view (POV) videos of you completing a task. Each recording clip should be between 10 and 20 seconds long. Keep your hands clearly visible within the frame at all times while recording — if your hands leave the frame, the clip may not be usable. Please don't rush: complete the activity at your normal pace and to your usual standard, exactly as you would if no one were filming.",
+    "task_steps": "<ol><li>Review the consent information</li><li>Answer questions about yourself</li><li>Decide which activity you will record</li><li>Record the activity naturally and without rushing, keeping your hands clearly visible in frame throughout</li><li>Upload a clear POV video recorded using smart glasses, a Go Pro type device, or body-mounted smart phone</li></ol>"
+  },
+  "collection_items": [
+    {
+      "order": 0,
+      "page_items": [
+        {
+          "order": 0,
+          "type": "rich_text",
+          "content": "# Welcome\nPlease read the **instructions** carefully before starting.",
+          "content_format": "markdown"
+        },
+        {
+          "order": 1,
+          "type": "free_text",
+          "description": "Enter your participant ID",
+          "validation": {
+            "type": "string",
+            "min": 3,
+            "max": 100
+          }
+        },
+        {
+          "order": 2,
+          "type": "multiple_choice",
+          "description": "Do you promise to record and upload original video that you yourself record?",
+          "options": [
+            {
+              "label": "Yes — I promise to record and upload original video that I myself record.",
+              "value": "Response 1"
+            }
+          ],
+          "answer_limit": 1
+        },
+        {
+          "order": 3,
+          "type": "file_upload",
+          "description": "Upload your video files recorded with your smart glasses, a Go Pro type device, or body-mounted smart phone",
+          "accepted_file_types": [".mov", ".hevc", ".mp4"],
+          "max_file_size_mb": 5000.0,
+          "min_file_count": 1,
+          "max_file_count": 3
+        },
+        {
+          "order": 4,
+          "type": "multiple_choice",
+          "description": "How many clips did you complete and upload?",
+          "options": [
+            {
+              "label": "1",
+              "value": "Response 1"
+            },
+            {
+              "label": "2",
+              "value": "Response 2"
+            },
+            {
+              "label": "3",
+              "value": "Response 3"
+            },
+            {
+              "label": "All clips in my batch",
+              "value": "4"
+            }
+          ],
+          "answer_limit": 1
+        },
+        {
+          "order": 5,
+          "type": "multiple_choice",
+          "description": "Were any clips in your batch unusable or problematic?",
+          "options": [
+            {
+              "label": "No — all clips were processed",
+              "value": "Response 1"
+            },
+            {
+              "label": "Yes — one or more clips had issues",
+              "value": "Response 2"
+            }
+          ],
+          "answer_limit": 1
+        },
+        {
+          "order": 6,
+          "type": "multiple_choice",
+          "description": "Are your files uploaded in the correct format (.mov, .hevc, .mp4)?",
+          "options": [
+            {
+              "label": "Yes — all files are in the correct format and uploaded",
+              "value": "Response 1"
+            }
+          ],
+          "answer_limit": 1
+        }
+      ]
+    }
+  ]
+}
