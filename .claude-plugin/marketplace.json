@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Official skills from Prolific for AI research and workflows",
-    "version": "0.4.0"
+    "version": "0.3.0"
   },
   "plugins": [
     {
