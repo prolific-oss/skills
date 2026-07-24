@@ -1,0 +1,46 @@
+[
+  {
+    "rows": [
+      {
+        "columns": [
+          {
+            "items": [
+              { "type": "rich_text", "content": "**Option A**", "content_format": "markdown" },
+              { "type": "dataset_field", "field": "option_a" }
+            ]
+          },
+          {
+            "items": [
+              { "type": "rich_text", "content": "**Option B**", "content_format": "markdown" },
+              { "type": "dataset_field", "field": "option_b" }
+            ]
+          }
+        ]
+      },
+      {
+        "columns": [
+          {
+            "items": [
+              {
+                "type": "multiple_choice",
+                "description": "Which option do you prefer?",
+                "answer_limit": 1,
+                "options": [
+                  { "label": "Option A is better", "value": "option_a" },
+                  { "label": "Option B is better", "value": "option_b" },
+                  { "label": "Equally good", "value": "equal" }
+                ]
+              },
+              {
+                "type": "free_text",
+                "description": "Briefly explain your choice.",
+                "placeholder_text_input": "Enter your reasoning here...",
+                "validation": { "type": "string", "min": 10, "max": 500 }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

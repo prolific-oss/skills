@@ -1,0 +1,29 @@
+{
+  "name": "<study-name>",
+  "internal_name": "<internal-name>",
+  "description": "<participant-facing description of the eval task>",
+  "data_collection_method": "AI_TASK_BUILDER_BATCH",
+  "data_collection_id": "<BATCH_ID>",
+  "data_collection_metadata": {
+    "annotators_per_task": 1
+  },
+  "device_compatibility": ["mobile", "desktop", "tablet"],
+  "peripheral_requirements": [],
+  "filters": [],
+  "estimated_completion_time": 5,
+  "submissions_config": {
+    "max_submissions_per_participant": 1
+  },
+  "reward": 100,
+  "total_available_places": 50,
+  "prolific_id_option": "question",
+  "completion_codes": [
+    {
+      "code": "<CODE>",
+      "code_type": "COMPLETED",
+      "actions": [
+        { "action": "MANUALLY_REVIEW" }
+      ]
+    }
+  ]
+}

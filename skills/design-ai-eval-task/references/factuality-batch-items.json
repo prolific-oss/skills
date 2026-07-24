@@ -1,0 +1,33 @@
+[
+  {
+    "rows": [
+      {
+        "columns": [
+          {
+            "items": [
+              { "type": "dataset_field", "field": "claim" },
+              { "type": "dataset_field", "field": "reference" },
+              {
+                "type": "multiple_choice",
+                "description": "How accurate is this claim given the reference?",
+                "answer_limit": 1,
+                "options": [
+                  { "label": "Accurate", "value": "accurate" },
+                  { "label": "Partially accurate", "value": "partially_accurate" },
+                  { "label": "Inaccurate", "value": "inaccurate" },
+                  { "label": "Cannot verify", "value": "unverifiable" }
+                ]
+              },
+              {
+                "type": "free_text",
+                "description": "Briefly justify your verdict.",
+                "placeholder_text_input": "Enter your justification here...",
+                "validation": { "type": "string", "min": 10, "max": 500 }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]
