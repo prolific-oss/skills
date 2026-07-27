@@ -1,3 +1,7 @@
+> **🚧 Pre-release Notice:**
+>
+> The Prolific Skills are currently in **pre-release** and considered **experimental**. Features may change, and some skills may be added, removed, or deprecated before the official release.
+
 # Prolific Skills
 
 Official skills from Prolific for AI workflows and research following the [agentskills.io](https://agentskills.io) specification. Includes a skills marketplace and plugins.
