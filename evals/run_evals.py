@@ -51,6 +51,11 @@ _SKILLS_ROOT = _EVALS_ROOT.parent / "skills"
 sys.path.insert(0, str(_EVALS_ROOT))
 
 from _shared.judge import grade_assertions  # noqa: E402
+from _shared.media import (  # noqa: E402
+    build_file_attachments,
+    prompt_with_attachments,
+    stage_attachments,
+)
 from _shared.runner import run_claude_code  # noqa: E402
 from _shared.sandbox import build_agent_env, ensure_prolific_binary  # noqa: E402
 
@@ -66,7 +71,7 @@ def load_evals(evals_path: Path) -> dict:
         return json.load(f)
 
 
-def sync_dataset(langfuse, evals_data: dict) -> str:
+def sync_dataset(langfuse, evals_data: dict, fixtures_root: Path) -> str:
     """Sync evals.json to a Langfuse Dataset. Safe to call on every run."""
     dataset_name = f"skill-evals-{evals_data['skill_name']}"
     langfuse.create_dataset(
@@ -74,10 +79,14 @@ def sync_dataset(langfuse, evals_data: dict) -> str:
         description=f"Evals for the {evals_data['skill_name']} skill",
     )
     for case in evals_data["evals"]:
+        item_input: dict = {"prompt": case["prompt"]}
+        if attachments := build_file_attachments(case, fixtures_root):
+            item_input["files"] = attachments
+
         langfuse.create_dataset_item(
             dataset_name=dataset_name,
             id=f"{evals_data['skill_name']}-{case['id']}",
-            input={"prompt": case["prompt"]},
+            input=item_input,
             expected_output=case["expected_output"],
             metadata={"id": case["id"], "assertions": case.get("assertions", [])},
         )
@@ -116,11 +125,15 @@ def run_experiment(
     dataset = langfuse.get_dataset(dataset_name)
 
     async def task(*, item, **kwargs) -> dict:
-        prompt = item.input["prompt"]
+        item_input = item.input or {}
         item_cwd = tempfile.mkdtemp(prefix=f"eval-{skill_name}-")
         try:
             if with_skill:
                 _inject_skill(item_cwd, skill_path)
+
+            staged = stage_attachments(Path(item_cwd), item_input.get("files"))
+            prompt = prompt_with_attachments(item_input["prompt"], staged)
+
             agent_env = build_agent_env(item_cwd, prolific_bin)
             result = await run_claude_code(prompt, args.max_turns, item_cwd, agent_env)
             return result
@@ -208,6 +221,7 @@ def main() -> None:
     load_dotenv(env_file, override=True)
 
     os.environ.pop("CLAUDECODE", None)
+    os.environ.pop("OTEL_SDK_DISABLED", None)
     os.environ["LANGSMITH_OTEL_ENABLED"] = "true"
     os.environ["LANGSMITH_OTEL_ONLY"] = "true"
     os.environ["LANGSMITH_TRACING"] = "true"
@@ -229,7 +243,7 @@ def main() -> None:
     prolific_bin = ensure_prolific_binary()
 
     evals_data = load_evals(evals_path)
-    dataset_name = sync_dataset(langfuse, evals_data)
+    dataset_name = sync_dataset(langfuse, evals_data, evals_path.parent)
 
     tags = ["prolific-cli", *args.tag]
 
