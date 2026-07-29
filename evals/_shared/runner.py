@@ -31,7 +31,9 @@ async def run_claude_code(
     options = ClaudeAgentOptions(
         max_turns=max_turns,
         cwd=item_cwd,
-        permission_mode="bypassPermissions",
+        # bypassPermissions silently blocked the agent from running CLI commands
+        # in this sandbox for an unknown reason; auto is less permissive but works.
+        permission_mode="auto",
         setting_sources=["project"],
         stderr=lambda line: stderr_lines.append(line),
         env=agent_env,
