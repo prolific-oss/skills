@@ -1,10 +1,10 @@
 ---
-name: study-publish
+name: publish-study
 description: Reviews a fully-assembled study spec, checks workspace funds, and publishes it only after explicit researcher confirmation. The one skill in this family that mutates — everything before the confirmation gate is read-only reporting.
 version: 0.1.0
 ---
 
-## Study Publish
+## Publish Study
 
 When asked to publish a study that's been fully specified in earlier steps, follow these steps. Unlike a purely advisory skill, this one's job is to actually publish — the explicit confirmation gate in Step 3 is what makes that safe, not avoidance of mutation.
 

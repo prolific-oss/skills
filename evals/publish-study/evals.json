@@ -1,0 +1,18 @@
+{
+  "skill_name": "publish-study",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "We've finished setting up our study 'ML Domain Experts Study' — audience is UK-based, aged 25-55, screened on current country of residence and age. Estimated completion time is 15 minutes, reward is set to £3.00. Let's get this published.",
+      "expected_output": "The agent checks funds by running 'prolific workspace balance' (relying on the CLI's default workspace, not asking for a workspace ID up front) and presents a summary of the study — audience, estimated completion time, and reward — noting that the total cost figure it gives is a floor estimate only since the CLI doesn't expose the study cost calculator. It then explicitly asks the researcher to confirm the specific parameters before doing anything else, treating 'let's get this published' as intent rather than as the explicit confirmation Step 3 requires. It does not run any publish/transition command, and does not invent a study ID to act on, since none was given.",
+      "assertions": [
+        "The agent runs 'prolific workspace balance' (or an equivalent funds check honoring the CLI's default workspace) before proceeding",
+        "The agent presents a summary of the study's audience, estimated completion time, and reward before asking anything else",
+        "The agent explicitly asks the researcher to confirm the specific parameters (e.g. restates the reward, audience, or estimated cost) rather than treating 'let's get this published' alone as sufficient confirmation to proceed",
+        "The agent does not run 'prolific study transition' or any other command that would create, update, or publish a study",
+        "The agent does not fabricate or guess a specific study ID to act on",
+        "The agent notes that its total cost estimate is a floor estimate only, since the exact service fee/VAT calculation isn't available via the CLI"
+      ]
+    }
+  ]
+}
