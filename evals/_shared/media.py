@@ -1,6 +1,7 @@
 """Generic Langfuse media helpers for optional eval file attachments.
 
-After the shared eval runner lands, keep this module and wire two call sites:
+Used by the shared eval runner:
+
   1. sync_dataset  -> build_file_attachments(...)
   2. experiment task -> stage_attachments(...) + prompt_with_attachments(...)
 
