@@ -1,0 +1,18 @@
+{
+  "skill_name": "plan-study-flow",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I want to plan a Prolific study about how university students use AI tools for coursework. Can you help me sketch the study?",
+      "expected_output": "The agent does not invent a complete study spec or flow from this underspecified request. Instead, it asks focused follow-up questions that help fill the three required sections of the skill template: the study overview or objective, whether the task format should be batch or collection, and what output data should be collected. The questions stay high level and useful rather than diving into unnecessary operational detail, and they gather enough information to later generate a task-format-aligned flow.json.",
+      "assertions": [
+        "The agent asks at least one clarifying question about the study's goal, purpose, or research objective",
+        "The agent asks a clarifying question that helps determine whether the task format should be one of 'batch' or 'collection'",
+        "The agent asks a clarifying question about the output details or what data should be collected",
+        "The agent keeps the questions high level and does not jump into deep implementation detail",
+        "The agent does not claim to have completed a final spec.md from the information already provided",
+        "The agent does not claim to have completed a final flow.json from the information already provided"
+      ]
+    }
+  ]
+}
