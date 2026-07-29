@@ -14,6 +14,12 @@ per-plugin versions), see
 
 - [feat|fix] <describe the change>
 
+## 0.3.0
+
+### collect-free-text
+
+- [feat] New skill: ask Prolific participants one or more open-ended questions and collect their free-text answers. Builds an AI Task Builder collection, creates a draft study, verifies the cost and requires explicit confirmation before spending, publishes to N participants, then exports and presents the responses as they arrive. Enforces fair-pay guidance (Prolific's minimum £6/$8 per hour) and never publishes or fabricates results without the CLI succeeding.
+
 ## 0.2.0
 
 ### whoami
