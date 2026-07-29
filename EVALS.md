@@ -13,12 +13,13 @@ evals/
 ├── _shared/
 │   ├── sandbox.py                   # downloads the Prolific CLI binary; builds the agent's env
 │   ├── runner.py                    # wraps Claude Agent SDK for a single eval item
-│   └── judge.py                     # LLM-as-judge: grades assertions against agent output
+│   ├── judge.py                     # LLM-as-judge: grades assertions against agent output
+│   └── media.py                     # optional LangfuseMedia file attachments for eval cases
 └── recommend-study-filters/
     └── evals.json                   # the eval dataset (prompts + assertions) — nothing else needed
 ```
 
-`run_evals.py` and `.env`/`.env.example` are shared across every skill — there is exactly one of each in `evals/`, not one per skill folder. A skill's eval folder only ever needs its `evals.json`.
+`run_evals.py` and `.env`/`.env.example` are shared across every skill — there is exactly one of each in `evals/`, not one per skill folder. A skill's eval folder only ever needs its `evals.json` (plus optional fixtures if using file attachments).
 
 ## How an eval run works
 
@@ -64,6 +65,27 @@ Every entry in `evals.json` has three fields:
 | `prompt`          | A realistic, natural-language user request                                                               |
 | `expected_output` | A prose description of correct agent behaviour, grounding filter_ids and values against the real catalog |
 | `assertions`      | A list of strings, each passed as a prompt to an LLM-as-judge                                            |
+
+Optional file attachments can also be declared on any eval case:
+
+| Field   | Purpose                                                                 |
+| ------- | ----------------------------------------------------------------------- |
+| `files` | Optional list of `{ "path": "...", "role": "..." }` fixture attachments |
+
+Example:
+
+```json
+"files": [
+  { "path": "fixtures/dummy_spec.md", "role": "context" },
+  { "path": "fixtures/responses-dataset.csv", "role": "dataset" }
+]
+```
+
+`role` is optional prompt metadata. Attachments are uploaded with
+`LangfuseMedia` on dataset sync and materialized into the agent working
+directory at run time via `LangfuseMediaReference.fetch_bytes()`
+(`evals/_shared/media.py`). Requires `langfuse>=4.10.0`. Skills without
+`files` are unchanged.
 
 Example:
 

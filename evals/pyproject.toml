@@ -4,7 +4,7 @@ version = "0.1.0"
 requires-python = ">=3.11"
 dependencies = [
     "anthropic",
-    "langfuse",
+    "langfuse>=4.10.0",
     "langsmith",
     "claude-agent-sdk",
     "python-dotenv",
