@@ -28,15 +28,14 @@ From the request or spec (structured or free text), extract:
 
 - The **target demographic / persona** description (e.g. "Domain Experts", "UK nurses with 5+ years experience")
 - The **participant group** — an ID, or a name that needs resolving
-- The **workspace** the participant group and study belong to
 
-If the workspace ID is missing, ask for it rather than guessing — participant group and filter set commands are scoped to a workspace.
+Participant group and filter set commands take a `-w`/`--workspace` flag, but it defaults to whatever workspace is configured in the researcher's Prolific CLI setup — omit it and let that default apply rather than asking for a workspace ID up front. Only ask the researcher to supply one explicitly if a command fails because no default is configured, or the spec names a workspace other than their default.
 
 If only a participant group **name** is given (not an ID), resolve it first:
 
 ```bash
 prolific participant --help
-prolific participant list -w <workspace-id>
+prolific participant list
 ```
 
 Match the name against the `Name` column. If nothing matches, say so explicitly — do not invent an ID.
@@ -65,7 +64,7 @@ Participant groups can themselves appear in this catalogue as a filter — look 
 If the spec references an existing study or filter set to review (rather than starting from a blank slate), fetch it too:
 
 ```bash
-prolific filter-sets list -w <workspace-id>
+prolific filter-sets list
 prolific filter-sets view <filter-set-id>
 ```
 
@@ -115,7 +114,7 @@ Structure the output as:
 4. **Suggested next step**, not an action taken: tell the researcher they can validate the real eligible-participant count by saving the block above as a template and running it themselves:
 
 ```bash
-prolific filter-sets create -t <template>.json -w <workspace-id>
+prolific filter-sets create -t <template>.json
 ```
 
 Never run this (or any other create/update/delete) command as part of producing the proposal — the proposal is a recommendation for the researcher to review, edit, and apply.

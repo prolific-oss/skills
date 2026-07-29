@@ -94,6 +94,8 @@ Sign up for [Langfuse](https://cloud.langfuse.com/) and create a project. Then c
 - `LANGFUSE_PUBLIC_KEY`, `LANGFUSE_SECRET_KEY`, `LANGFUSE_BASE_URL`
 - `LANGFUSE_USER_ID` (optional — attributes traces to your Langfuse user)
 
+Some skills (e.g. `study-recruitment-proposal`) exercise workspace-scoped resources like participant groups. Rather than hardcoding a workspace ID in `evals.json` — this repo is public, and real workspaces contain real client/participant data — those evals rely on the Prolific CLI's own configured default workspace (the `-w`/`--workspace` flag falls back to a `workspace` key in `~/.config/prolific-oss/prolific.yaml`, or a `WORKSPACE` env var). Point that default at a dedicated, non-sensitive sandbox workspace before running them.
+
 ### Run
 
 ```bash
