@@ -11,14 +11,14 @@ Official skills from Prolific for AI workflows and research following the [agent
 Via [agentskills.io](https://agentskills.io):
 
 ```bash
-npx skills add prolific/skills
+npx skills add prolific-oss/skills
 ```
 
 Or install individual skills:
 
 ```bash
 # example prolific skill only
-npx skills add prolific/skills --skill recommend-study-filters
+npx skills add prolific-oss/skills --skill recommend-study-filters
 ```
 
 Or natively from Claude Code:

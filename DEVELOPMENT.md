@@ -80,7 +80,7 @@ without any extra work.
 | Install path                                                                                   | What it reads to detect updates                        | When users see an update                                   |
 | ---------------------------------------------------------------------------------------------- | ------------------------------------------------------ | ---------------------------------------------------------- |
 | `/plugin install ...@prolific` (Claude Code)                                                   | the installed plugin's `version` in `marketplace.json` | When that plugin's `version` is bumped (our release model) |
-| `npx skills add prolific/skills` ([vercel-labs/skills](https://github.com/vercel-labs/skills)) | GitHub Trees API → skill folder SHA                    | When any file in the skill folder changes                  |
+| `npx skills add prolific-oss/skills` ([vercel-labs/skills](https://github.com/vercel-labs/skills)) | GitHub Trees API → skill folder SHA                    | When any file in the skill folder changes                  |
 
 ### Claude Code marketplace path
 
