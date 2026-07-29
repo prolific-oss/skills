@@ -7,16 +7,18 @@ Evals measure whether a skill actually improves agent behaviour. Each skill's ev
 ```
 evals/
 ├── pyproject.toml                   # shared dependencies (uv)
+├── .env.example                     # copy to .env — credentials shared by every skill's evals
+├── run_evals.py                     # single entry point for all skills, takes a skill name argument
 ├── _cache/                          # downloaded Prolific CLI binaries (gitignored)
 ├── _shared/
 │   ├── sandbox.py                   # downloads the Prolific CLI binary; builds the agent's env
 │   ├── runner.py                    # wraps Claude Agent SDK for a single eval item
 │   └── judge.py                     # LLM-as-judge: grades assertions against agent output
 └── recommend-study-filters/
-    ├── evals.json                   # the eval dataset (prompts + assertions)
-    ├── run_evals.py                  # entry point — wires everything together
-    └── .env                         # credentials (gitignored; copy from .env.example)
+    └── evals.json                   # the eval dataset (prompts + assertions) — nothing else needed
 ```
+
+`run_evals.py` and `.env`/`.env.example` are shared across every skill — there is exactly one of each in `evals/`, not one per skill folder. A skill's eval folder only ever needs its `evals.json`.
 
 ## How an eval run works
 
@@ -49,9 +51,9 @@ evals/
 ## Adding a new skill eval
 
 1. Create `evals/<skill-name>/evals.json` with prompts and assertions.
-2. Create `evals/<skill-name>/run_evals.py` — copy `recommend-study-filters/run_evals.py` as a template and update `SKILL_PATH` (point at `skills/<skill-name>/SKILL.md`) and `EVALS_PATH`.
-3. Add a `.env.example` alongside it (copy and adjust the existing one).
-4. Run with: `uv run <skill-name>/run_evals.py --both` from `evals/`.
+2. That's it — no new `run_evals.py` or `.env.example` needed. Run it with: `uv run run_evals.py <skill-name> --both` from `evals/`.
+
+Pass `--tag <name>` (repeatable) to attach skill-specific Langfuse tags for a run, e.g. `--tag eligibility --tag participant-group`.
 
 ### Eval file structure
 
@@ -85,7 +87,7 @@ Example:
 
 ### First-time setup
 
-Sign up for [Langfuse](https://cloud.langfuse.com/) and create a project. Then copy `.env.example` to `.env` in `evals/recommend-study-filters/` and set:
+Sign up for [Langfuse](https://cloud.langfuse.com/) and create a project. Then copy `.env.example` to `.env` in `evals/` (shared by every skill's evals) and set:
 
 - `ANTHROPIC_API_KEY`
 - `PROLIFIC_TEST_TOKEN`
@@ -97,8 +99,8 @@ Sign up for [Langfuse](https://cloud.langfuse.com/) and create a project. Then c
 ```bash
 cd evals
 
-uv run recommend-study-filters/run_evals.py           # with skill (default)
-uv run recommend-study-filters/run_evals.py --without-skill
-uv run recommend-study-filters/run_evals.py --both    # A/B comparison
-uv run recommend-study-filters/run_evals.py --max-turns 15
+uv run run_evals.py recommend-study-filters           # with skill (default)
+uv run run_evals.py recommend-study-filters --without-skill
+uv run run_evals.py recommend-study-filters --both    # A/B comparison
+uv run run_evals.py recommend-study-filters --max-turns 15
 ```
