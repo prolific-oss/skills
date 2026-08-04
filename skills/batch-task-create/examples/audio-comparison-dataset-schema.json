@@ -1,0 +1,17 @@
+{
+  "strict": true,
+  "fields": {
+    "transcript": {
+      "type": "text",
+      "label": "Reference transcript"
+    },
+    "audio_a": {
+      "type": "audio_url",
+      "label": "Audio A"
+    },
+    "audio_b": {
+      "type": "audio_url",
+      "label": "Audio B"
+    }
+  }
+}

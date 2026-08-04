@@ -185,7 +185,9 @@ def build_agent_env(item_cwd: str, prolific_binary: Path) -> dict[str, str]:
     ----------------
     PROLIFIC_TEST_TOKEN takes priority over PROLIFIC_TOKEN.  This allows
     a dedicated eval/test Prolific account to be used for evals without
-    touching the developer's personal token.
+    touching the developer's personal token.  Additional Prolific-prefixed
+    config such as PROLIFIC_TEST_WORKSPACE_ID is also passed through so
+    prompts can reference it.
 
     Langfuse credentials
     --------------------
@@ -205,10 +207,14 @@ def build_agent_env(item_cwd: str, prolific_binary: Path) -> dict[str, str]:
     if not token:
         print("  Warning: neither PROLIFIC_TEST_TOKEN nor PROLIFIC_TOKEN is set.")
 
-    return {
+    env = {
         "PROLIFIC_TOKEN": token,
         "PATH": bin_dir + os.pathsep + os.environ.get("PATH", ""),
         "LANGFUSE_PUBLIC_KEY": "",
         "LANGFUSE_SECRET_KEY": "",
         "LANGFUSE_BASE_URL": "",
     }
+    for key, value in os.environ.items():
+        if key.startswith("PROLIFIC_") and key not in env:
+            env[key] = value
+    return env

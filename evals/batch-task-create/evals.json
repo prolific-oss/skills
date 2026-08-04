@@ -1,0 +1,21 @@
+{
+  "skill_name": "batch-task-create",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I'm setting up a live evaluation batch for a very lightweight side-by-side audio comparison. In the current directory you'll find a CSV file named sample-audio-comparison.csv with the dataset rows. The `prolific` CLI is already available on the current PATH, so invoke it directly as `prolific ...` rather than via `bin/prolific` or another relative path. Use workspace ID '{{PROLIFIC_TEST_WORKSPACE_ID}}' and do not guess or replace it. Before creating resources, inspect the relevant Prolific CLI help commands, but run each help command as a separate bash invocation rather than combining multiple operations into one shell command. Please create the dataset schema and batch_items, then run the Prolific CLI end to end to create the dataset, upload the rows, and create the batch. Use dataset name 'Skill eval audio comparison dataset' and batch name 'Skill eval audio comparison batch'. Use task name 'Choose the more natural clip', task introduction 'Listen to two recordings of the same transcript and pick the one that sounds more natural overall.', and task steps '1. Read the transcript 2. Listen to Audio A and Audio B 3. Choose the clip that sounds more natural overall'. Keep the participant layout intentionally minimal: show brief instructions, show the transcript, present Audio A and Audio B side by side, and ask only one final multiple-choice question for the overall winner. Do not add extra per-clip rating questions unless they are required. Do the work end to end and return the created dataset schema, the batch_items JSON, the important created resource IDs, and a short explanation of the final layout.",
+      "expected_output": "The agent inspects the relevant CLI help commands before acting, reads sample-audio-comparison.csv, infers a strict schema that preserves the exact fields transcript, audio_a, and audio_b with transcript typed as text and both audio fields typed as audio_url, creates a non-empty minimal batch_items JSON array with brief instructions, the transcript, a two-column side-by-side presentation of Audio A and Audio B, and a single final multiple-choice response input, then runs the dataset create, dataset upload, and batch create CLI commands using the provided workspace ID. The final answer includes the dataset schema, the batch_items JSON, the created dataset and batch IDs if the CLI succeeded, and a short explanation of the participant layout.",
+      "assertions": [
+        "The agent runs 'prolific aitaskbuilder dataset create --help', 'prolific aitaskbuilder dataset upload --help', and 'prolific aitaskbuilder batch create --help' before creating resources",
+        "The agent reads or samples the local file sample-audio-comparison.csv before generating the schema",
+        "The agent outputs a dataset schema with strict set to true and exact fields named transcript, audio_a, and audio_b",
+        "The agent types transcript as text and both audio_a and audio_b as audio_url",
+        "The agent outputs a non-empty batch_items JSON array that uses a two-column comparison layout for Audio A and Audio B",
+        "The agent places instructions before the comparison content and includes the transcript in the participant layout",
+        "The agent keeps the layout minimal by asking only one final overall multiple-choice question rather than separate per-clip rating questions",
+        "The agent runs the end-to-end CLI workflow including dataset create, dataset upload, and batch create",
+        "The agent reports the created dataset ID and batch ID if the CLI succeeds, or clearly states the concrete CLI failure without falsely claiming success"
+      ]
+    }
+  ]
+}

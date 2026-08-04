@@ -18,7 +18,9 @@ evals/
     └── evals.json                   # the eval dataset (prompts + assertions) — nothing else needed
 ```
 
-`run_evals.py` and `.env`/`.env.example` are shared across every skill — there is exactly one of each in `evals/`, not one per skill folder. A skill's eval folder only ever needs its `evals.json`.
+`run_evals.py` and `.env`/`.env.example` are shared across every skill — there is exactly one of each in `evals/`, not one per skill folder. A skill's eval folder always needs `evals.json`, and can optionally include local fixture files; any extra files in that folder are copied into the temp eval directory before the agent runs.
+
+String fields in `evals.json` can also reference environment variables with `{{ENV_VAR_NAME}}`. The runner resolves those placeholders before syncing the dataset and starting the agent, which is useful for live eval inputs like workspace IDs that you do not want the agent to fetch manually.
 
 ## How an eval run works
 
