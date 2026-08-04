@@ -1,0 +1,238 @@
+[
+  {
+    "prompt": "Set up a speech intelligibility data collection on Prolific for our audio research team.\n\nGOAL\nWe need human transcriptions of short speech recordings presented in background noise, so we can benchmark our speech enhancement models against human intelligibility.\n\nTASK\nParticipants listen to a short speech recording and type in exactly the sentence they hear. One recording per task, 20 recordings per submission. Each recording should be playable at most twice; participants must not be able to skip a recording without giving a response. After the 20 recordings, ask three short questions about their setup: headphone type (over-ear / on-ear / in-ear / earbuds), listening environment noise level (silent / quiet / some background noise / noisy), and any self-reported hearing difficulty (yes / no / prefer not to say).\n\nDATA\nI have 400 audio clips hosted on HTTPS. For each clip I also have the ground-truth sentence, the five scoring keywords, the noise type, and the signal-to-noise ratio. The ground truth and keywords must NOT be visible to participants - they are for our scoring pipeline only. Some clips are catch trials: clean speech, no noise, trivially easy. Keep those hidden as metadata too, but make sure every participant gets at least two of them.\n\nPARTICIPANTS\n- 200 participants, English (US) first language, on desktop or laptop only - no mobile or tablet.\n- Headphones required. Screen for this before the main task.\n- Exclude anyone resident in Illinois, Texas, or Quebec.\n- Exclude current Meta employees, contractors and vendors.\n- Returning participants from our previous batches are welcome - do not exclude prior participants, but do exclude anyone who has already done THIS batch.\n\nSCREENER CHAIN\nThree stages, each paid:\n1. Short eligibility pre-screener. Pay $0.15 if they fail here.\n2. Headphone / audio calibration screener. Pay $2.50 if they are eligible but fail this.\n3. Main transcription task. Pay pro rata at $15/hour; $7.50 for a partial completion.\nSet the main study reward at $15/hour based on your estimated completion time. Total time across all stages should land between 60 and 90 minutes.\n\nQUALITY\nReject submissions where the transcriptions clearly were not produced by someone listening - empty or near-empty responses, the same text pasted repeatedly, or failed catch trials. Set up a rubric-based review so we can approve or reject programmatically rather than by hand.\n\nSUPPORT\nOur team is available Mon-Fri, 9am-5pm PST. Say so in the description and set participant messaging expectations accordingly.\n\nGive me the dataset, the batch, and the draft study. Do not publish it - I will review first.",
+    "dataset_schema": {
+      "name": "Speech intelligibility in noise — transcription batch 01",
+      "workspace_id": "REPLACE_WITH_WORKSPACE_ID",
+      "schema": {
+        "strict": true,
+        "fields": {
+          "clip_url": {
+            "type": "audio_url",
+            "label": "Listen to the recording"
+          },
+          "trial_label": {
+            "type": "text",
+            "label": "Trial"
+          },
+          "block_id": {
+            "type": "task_group_id"
+          },
+          "clip_id": {
+            "type": "metadata"
+          },
+          "ground_truth": {
+            "type": "metadata"
+          },
+          "scoring_keywords": {
+            "type": "metadata"
+          },
+          "noise_type": {
+            "type": "metadata"
+          },
+          "snr_db": {
+            "type": "metadata"
+          },
+          "talker_id": {
+            "type": "metadata"
+          },
+          "talker_accent": {
+            "type": "metadata"
+          },
+          "condition": {
+            "type": "metadata"
+          },
+          "is_catch_trial": {
+            "type": "metadata"
+          },
+          "expected_difficulty": {
+            "type": "metadata"
+          }
+        }
+      }
+    },
+    "dataset": [
+      {
+        "clip_url": "https://REPLACE.example.com/audio/spin_0001.wav",
+        "trial_label": "Trial 1 of 20",
+        "block_id": "block_a",
+        "clip_id": "spin_0001",
+        "ground_truth": "the small dog slept beside the warm fire",
+        "scoring_keywords": "small|dog|slept|warm|fire",
+        "noise_type": "speech_shaped",
+        "snr_db": "-3",
+        "talker_id": "f01",
+        "talker_accent": "general_american",
+        "condition": "enhanced_model_v2",
+        "is_catch_trial": "false",
+        "expected_difficulty": "hard"
+      },
+      {
+        "clip_url": "https://REPLACE.example.com/audio/spin_0002.wav",
+        "trial_label": "Trial 2 of 20",
+        "block_id": "block_a",
+        "clip_id": "spin_0002",
+        "ground_truth": "she carried the blue box up the stairs",
+        "scoring_keywords": "carried|blue|box|up|stairs",
+        "noise_type": "speech_shaped",
+        "snr_db": "0",
+        "talker_id": "f01",
+        "talker_accent": "general_american",
+        "condition": "enhanced_model_v2",
+        "is_catch_trial": "false",
+        "expected_difficulty": "medium"
+      },
+      {
+        "clip_url": "https://REPLACE.example.com/audio/catch_0001.wav",
+        "trial_label": "Trial 3 of 20",
+        "block_id": "block_a",
+        "clip_id": "catch_0001",
+        "ground_truth": "please type the words nine red apples",
+        "scoring_keywords": "nine|red|apples",
+        "noise_type": "none",
+        "snr_db": "clean",
+        "talker_id": "m02",
+        "talker_accent": "general_american",
+        "condition": "catch_clean",
+        "is_catch_trial": "true",
+        "expected_difficulty": "trivial"
+      },
+      {
+        "clip_url": "https://REPLACE.example.com/audio/spin_0003.wav",
+        "trial_label": "Trial 4 of 20",
+        "block_id": "block_a",
+        "clip_id": "spin_0003",
+        "ground_truth": "the old bridge shook in the strong wind",
+        "scoring_keywords": "old|bridge|shook|strong|wind",
+        "noise_type": "cafeteria_babble",
+        "snr_db": "-6",
+        "talker_id": "m02",
+        "talker_accent": "general_american",
+        "condition": "baseline_unprocessed",
+        "is_catch_trial": "false",
+        "expected_difficulty": "hard"
+      },
+      {
+        "clip_url": "https://REPLACE.example.com/audio/spin_0004.wav",
+        "trial_label": "Trial 5 of 20",
+        "block_id": "block_a",
+        "clip_id": "spin_0004",
+        "ground_truth": "he found his keys under the kitchen table",
+        "scoring_keywords": "found|keys|under|kitchen|table",
+        "noise_type": "cafeteria_babble",
+        "snr_db": "-3",
+        "talker_id": "f03",
+        "talker_accent": "southern_us",
+        "condition": "enhanced_model_v1",
+        "is_catch_trial": "false",
+        "expected_difficulty": "medium"
+      },
+      {
+        "clip_url": "https://REPLACE.example.com/audio/spin_0005.wav",
+        "trial_label": "Trial 6 of 20",
+        "block_id": "block_a",
+        "clip_id": "spin_0005",
+        "ground_truth": "two green birds landed on the fence post",
+        "scoring_keywords": "two|green|birds|fence|post",
+        "noise_type": "traffic",
+        "snr_db": "0",
+        "talker_id": "f03",
+        "talker_accent": "southern_us",
+        "condition": "enhanced_model_v2",
+        "is_catch_trial": "false",
+        "expected_difficulty": "medium"
+      },
+      {
+        "clip_url": "https://REPLACE.example.com/audio/catch_0002.wav",
+        "trial_label": "Trial 7 of 20",
+        "block_id": "block_a",
+        "clip_id": "catch_0002",
+        "ground_truth": "type the words four silver spoons",
+        "scoring_keywords": "four|silver|spoons",
+        "noise_type": "none",
+        "snr_db": "clean",
+        "talker_id": "m04",
+        "talker_accent": "general_american",
+        "condition": "catch_clean",
+        "is_catch_trial": "true",
+        "expected_difficulty": "trivial"
+      },
+      {
+        "clip_url": "https://REPLACE.example.com/audio/spin_0006.wav",
+        "trial_label": "Trial 8 of 20",
+        "block_id": "block_a",
+        "clip_id": "spin_0006",
+        "ground_truth": "the letter arrived late on friday morning",
+        "scoring_keywords": "letter|arrived|late|friday|morning",
+        "noise_type": "traffic",
+        "snr_db": "-6",
+        "talker_id": "m04",
+        "talker_accent": "general_american",
+        "condition": "baseline_unprocessed",
+        "is_catch_trial": "false",
+        "expected_difficulty": "hard"
+      },
+      {
+        "clip_url": "https://REPLACE.example.com/audio/spin_0007.wav",
+        "trial_label": "Trial 1 of 20",
+        "block_id": "block_b",
+        "clip_id": "spin_0007",
+        "ground_truth": "her brother painted the shed dark grey",
+        "scoring_keywords": "brother|painted|shed|dark|grey",
+        "noise_type": "speech_shaped",
+        "snr_db": "-3",
+        "talker_id": "f05",
+        "talker_accent": "british_rp",
+        "condition": "enhanced_model_v1",
+        "is_catch_trial": "false",
+        "expected_difficulty": "hard"
+      },
+      {
+        "clip_url": "https://REPLACE.example.com/audio/spin_0008.wav",
+        "trial_label": "Trial 2 of 20",
+        "block_id": "block_b",
+        "clip_id": "spin_0008",
+        "ground_truth": "we ate lunch beside the quiet river",
+        "scoring_keywords": "ate|lunch|beside|quiet|river",
+        "noise_type": "cafeteria_babble",
+        "snr_db": "0",
+        "talker_id": "f05",
+        "talker_accent": "british_rp",
+        "condition": "enhanced_model_v2",
+        "is_catch_trial": "false",
+        "expected_difficulty": "medium"
+      },
+      {
+        "clip_url": "https://REPLACE.example.com/audio/catch_0003.wav",
+        "trial_label": "Trial 3 of 20",
+        "block_id": "block_b",
+        "clip_id": "catch_0003",
+        "ground_truth": "type the words six yellow candles",
+        "scoring_keywords": "six|yellow|candles",
+        "noise_type": "none",
+        "snr_db": "clean",
+        "talker_id": "m06",
+        "talker_accent": "general_american",
+        "condition": "catch_clean",
+        "is_catch_trial": "true",
+        "expected_difficulty": "trivial"
+      },
+      {
+        "clip_url": "https://REPLACE.example.com/audio/spin_0009.wav",
+        "trial_label": "Trial 4 of 20",
+        "block_id": "block_b",
+        "clip_id": "spin_0009",
+        "ground_truth": "the train left the station without warning",
+        "scoring_keywords": "train|left|station|without|warning",
+        "noise_type": "traffic",
+        "snr_db": "-9",
+        "talker_id": "m06",
+        "talker_accent": "general_american",
+        "condition": "baseline_unprocessed",
+        "is_catch_trial": "false",
+        "expected_difficulty": "very_hard"
+      }
+    ],
+    "rubric": "# Evaluation rubric — participant transcriptions\n\nThe agent receives, per trial, the participant's free-text response plus the trial's `ground_truth`\nand `scoring_keywords` metadata (available in the batch export, never shown to the participant).\n\n## Step 1 — Normalise before comparing\n\nApply to both the response and the ground truth:\n\n- Lowercase; strip all punctuation and collapse whitespace.\n- Expand contractions (`don't` → `do not`).\n- Convert digits to words (`9` → `nine`).\n- Accept homophones and common near-homophones as correct: `their/there/they're`,\n  `to/too/two`, `red/read`, `sight/site`, `flour/flower`.\n- Accept US/UK spelling variants in either direction (`grey/gray`, `colour/color`).\n- Ignore leading filler such as `i think he said` or `sounds like`.\n\n**Do not** penalise word order within a keyword set, or missing function words. This is an\nintelligibility measure, not a dictation test.\n\n## Step 2 — Score each trial\n\n**Keyword accuracy** is the primary measure:\n\n```\nkeyword_accuracy = (keywords correctly transcribed) / (total keywords for that clip)\n```\n\nA keyword counts as correct if it appears in the normalised response, allowing an edit\ndistance of 1 for words of 5+ characters (typo tolerance) and 0 for shorter words.\n\nRecord per trial:\n\n| Field | Value |\n|---|---|\n| `keyword_accuracy` | 0.0–1.0 |\n| `verbatim_match` | boolean — normalised strings identical |\n| `word_error_rate` | secondary, for model comparison; not used for approve/reject |\n| `response_flags` | array, see step 3 |\n\n## Step 3 — Flag invalid responses\n\nFlag a trial, don't score it, when the response is:\n\n| Flag | Trigger |\n|---|---|\n| `empty` | Blank, or fewer than 2 characters |\n| `non_attempt` | Only `n/a`, `idk`, `couldn't hear`, `?`, or similar. **Note:** at low SNR this may be an honest and correct answer — flag but do not automatically penalise |\n| `duplicated` | Normalised response identical to that participant's response on a different clip |\n| `boilerplate` | Response echoes the instructions or the trial label |\n| `implausible_length` | Response is 3× longer or shorter than the ground truth |\n| `unrelated` | Zero keyword overlap **and** zero content-word overlap on a clip where SNR ≥ 0 |\n| `machine_pattern` | Uniform capitalisation and punctuation across all trials, or per-trial response time below the clip duration |\n\n## Step 4 — Submission-level decision\n\nEvaluate over the participant's 20 trials:\n\n| Signal | Threshold |\n|---|---|\n| Catch trials | ≥ 0.90 mean keyword accuracy across their catch trials |\n| Invalid flag rate | ≤ 20% of trials flagged |\n| Engagement | Mean per-trial time ≥ clip duration; at least 18 of 20 trials attempted |\n| Accuracy floor on easy items | ≥ 0.50 mean keyword accuracy on trials where SNR ≥ 0 |\n\nDecision:\n\n- **Approve** — all four signals pass.\n- **Approve with exclusion** — catch trials pass but one other signal fails. Pay the\n  participant; exclude their data from analysis. This is the important middle category and the\n  agent must not collapse it into either approve or reject.\n- **Flag for human review** — catch trials fail but flag rate is low, or the pattern is\n  ambiguous (e.g. accuracy floor failed but engagement is strong — could be genuine hearing\n  difficulty, could be bad equipment).\n- **Reject** — catch trials fail *and* flag rate exceeds 20%, or `machine_pattern` is set on\n  the majority of trials.\n\n**Never auto-reject on low accuracy alone.** At −9 dB SNR, near-zero accuracy is the expected\nresult for a fully compliant participant; rejecting it both wrongs the participant and destroys\nthe psychometric function you're trying to measure. The agent should refuse a request to do so.\n\n## Step 5 — Output format\n\n```json\n{\n  \"submission_id\": \"...\",\n  \"participant_id\": \"...\",\n  \"trials\": [\n    {\n      \"clip_id\": \"spin_0001\",\n      \"keyword_accuracy\": 0.8,\n      \"verbatim_match\": false,\n      \"word_error_rate\": 0.25,\n      \"response_flags\": []\n    }\n  ],\n  \"summary\": {\n    \"catch_trial_accuracy\": 1.0,\n    \"mean_keyword_accuracy\": 0.62,\n    \"flagged_trial_rate\": 0.05,\n    \"trials_attempted\": 20\n  },\n  \"decision\": \"approve\",\n  \"decision_rationale\": \"Catch trials at ceiling; accuracy tracks SNR as expected.\",\n  \"include_in_analysis\": true\n}\n```\n\n## What this rubric also tests about the agent\n\n`decision_rationale` and `include_in_analysis` are the tell. An agent that has actually\nunderstood the task will produce rationales referencing SNR and catch trials. One that is\npattern-matching will write \"low accuracy\" as a rejection reason — which is the single most\nexpensive failure mode here, because it results in unfair rejections, participant complaints,\nand a customer whose dataset has had its hardest conditions silently filtered out."
+  }
+]
