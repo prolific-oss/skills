@@ -8,6 +8,12 @@ For the versioning model (the release-train number vs. independent
 per-plugin versions), see
 [DEVELOPMENT.md](./DEVELOPMENT.md#how-the-versions-move).
 
+## 0.4.0
+
+### batch-task-create
+
+- [feat] New skill: creates a Prolific AI Task Builder batch from a researcher-provided dataset by generating the dataset schema, building the `batch_items` layout, and executing the CLI workflow. Added to the `prolific-beta-skills` plugin.
+
 ## 0.3.0
 
 ### New plugin: adds new prolific skills plugin, aside from the current beta skills plugin, to hold well evaluated skills.
