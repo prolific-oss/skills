@@ -8,6 +8,12 @@ For the versioning model (the release-train number vs. independent
 per-plugin versions), see
 [DEVELOPMENT.md](./DEVELOPMENT.md#how-the-versions-move).
 
+## 0.4.0
+
+### collect-egocentric-video-dataset
+
+- [feat] New skill: creates the linked Prolific project, AI Task Builder collection, and study needed to recruit participants for egocentric (point-of-view) video capture of a specific activity, chaining the IDs produced by each step. Always creates the study in DRAFT state and never modifies the fixed `internet-enabled-products` eligibility filter that restricts distribution to participants with capture-capable devices.
+
 ## 0.3.0
 
 ### New plugin: adds new prolific skills plugin, aside from the current beta skills plugin, to hold well evaluated skills.
