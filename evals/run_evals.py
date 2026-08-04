@@ -27,7 +27,9 @@ not evals/<skill-name>/; credentials are shared across all skills' evals):
 Adding a new skill's eval
 --------------------------
 No new run_evals.py needed. Add evals/<skill-name>/evals.json (see EVALS.md
-for the schema) and run this script with that skill name.
+for the schema) and run this script with that skill name. Any additional
+files in evals/<skill-name>/ are copied into the temp eval directory so
+prompts can rely on local fixtures.
 """
 
 from __future__ import annotations
@@ -35,6 +37,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import shutil
 import sys
 import tempfile
@@ -63,7 +66,28 @@ JUDGE_MODEL = "claude-haiku-4-5-20251001"
 
 def load_evals(evals_path: Path) -> dict:
     with open(evals_path) as f:
-        return json.load(f)
+        return _resolve_env_placeholders(json.load(f), evals_path)
+
+
+def _resolve_env_placeholders(value, evals_path: Path):
+    """Resolve {{ENV_VAR}} placeholders in eval fixtures before syncing/running."""
+    if isinstance(value, dict):
+        return {key: _resolve_env_placeholders(item, evals_path) for key, item in value.items()}
+    if isinstance(value, list):
+        return [_resolve_env_placeholders(item, evals_path) for item in value]
+    if not isinstance(value, str):
+        return value
+
+    def replace(match: re.Match[str]) -> str:
+        env_var = match.group(1)
+        env_value = os.getenv(env_var)
+        if env_value is None:
+            raise KeyError(
+                f"Missing required environment variable {env_var!r} referenced in {evals_path}"
+            )
+        return env_value
+
+    return re.sub(r"\{\{([A-Z0-9_]+)\}\}", replace, value)
 
 
 def sync_dataset(langfuse, evals_data: dict) -> str:
@@ -88,10 +112,24 @@ def sync_dataset(langfuse, evals_data: dict) -> str:
 # Skill injection
 # ---------------------------------------------------------------------------
 
+def _stage_directory_contents(source_dir: Path, destination_dir: Path, *, skip_names: set[str] | None = None) -> None:
+    """Copy a directory's immediate contents into the destination directory."""
+    skip_names = skip_names or set()
+    for child in source_dir.iterdir():
+        if child.name in skip_names:
+            continue
+        destination = destination_dir / child.name
+        if child.is_dir():
+            shutil.copytree(child, destination)
+        else:
+            shutil.copy2(child, destination)
+
+
 def _inject_skill(cwd: str, skill_path: Path) -> None:
-    """Write the skill into CLAUDE.md so the agent reads it as project context."""
+    """Write the skill into CLAUDE.md and stage bundled skill assets."""
     with open(os.path.join(cwd, "CLAUDE.md"), "w") as f:
         f.write(skill_path.read_text())
+    _stage_directory_contents(skill_path.parent, Path(cwd), skip_names={"SKILL.md"})
 
 # ---------------------------------------------------------------------------
 # Experiment
@@ -107,6 +145,7 @@ def run_experiment(
     args: argparse.Namespace,
     skill_name: str,
     skill_path: Path,
+    evals_dir: Path,
     tags: list[str],
 ) -> None:
     experiment_name = f"{skill_name}-{'with' if with_skill else 'without'}-skill"
@@ -119,6 +158,7 @@ def run_experiment(
         prompt = item.input["prompt"]
         item_cwd = tempfile.mkdtemp(prefix=f"eval-{skill_name}-")
         try:
+            _stage_directory_contents(evals_dir, Path(item_cwd), skip_names={"evals.json"})
             if with_skill:
                 _inject_skill(item_cwd, skill_path)
             agent_env = build_agent_env(item_cwd, prolific_bin)
@@ -236,16 +276,16 @@ def main() -> None:
     if args.both:
         run_experiment(
             langfuse, anthropic_client, dataset_name, True,
-            prolific_bin, args, skill_name, skill_path, tags,
+            prolific_bin, args, skill_name, skill_path, evals_path.parent, tags,
         )
         run_experiment(
             langfuse, anthropic_client, dataset_name, False,
-            prolific_bin, args, skill_name, skill_path, tags,
+            prolific_bin, args, skill_name, skill_path, evals_path.parent, tags,
         )
     else:
         run_experiment(
             langfuse, anthropic_client, dataset_name, not args.without_skill,
-            prolific_bin, args, skill_name, skill_path, tags,
+            prolific_bin, args, skill_name, skill_path, evals_path.parent, tags,
         )
 
     langfuse.flush()

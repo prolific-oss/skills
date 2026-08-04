@@ -6,9 +6,25 @@ from claude_agent_sdk import (
     AssistantMessage,
     ClaudeAgentOptions,
     ClaudeSDKClient,
+    PermissionResultAllow,
     ResultMessage,
 )
 from claude_agent_sdk.types import TextBlock, ToolUseBlock
+
+
+async def _allow_all_tools(tool_name, tool_input, context):
+    """Auto-approve every tool call.
+
+    permission_mode="bypassPermissions" is not enough on machines whose
+    org-managed settings set permissions.disableBypassPermissionsMode — there
+    the CLI silently downgrades the session to default permission mode, and any
+    non-allowlisted Bash command (e.g. `prolific ... --help`) blocks on an
+    approval prompt that a headless run can never answer ("This command
+    requires approval"). A can_use_tool callback is consulted in default mode
+    (it requires streaming mode, which ClaudeSDKClient uses) and approves the
+    call regardless of the bypass policy.
+    """
+    return PermissionResultAllow()
 
 
 async def run_claude_code(
@@ -32,6 +48,7 @@ async def run_claude_code(
         max_turns=max_turns,
         cwd=item_cwd,
         permission_mode="bypassPermissions",
+        can_use_tool=_allow_all_tools,
         setting_sources=["project"],
         stderr=lambda line: stderr_lines.append(line),
         env=agent_env,

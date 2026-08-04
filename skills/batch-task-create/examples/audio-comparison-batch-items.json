@@ -1,0 +1,142 @@
+[
+  {
+    "rows": [
+      {
+        "columns": [
+          {
+            "items": [
+              {
+                "type": "rich_text",
+                "content_format": "markdown",
+                "content": "**Listen to both audio clips in full.** The same utterance is read aloud by two different voices. Score each voice for how natural it sounds, then choose which one you prefer overall."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "columns": [
+          {
+            "items": [
+              {
+                "type": "dataset_field",
+                "field": "transcript"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "columns": [
+          {
+            "items": [
+              {
+                "type": "dataset_field",
+                "field": "audio_a"
+              },
+              {
+                "type": "multiple_choice",
+                "description": "Naturalness score for Audio A",
+                "helper_text": "1 = robotic, 5 = indistinguishable from a human",
+                "answer_limit": 1,
+                "disable_dropdown": true,
+                "options": [
+                  {
+                    "label": "1 - Very unnatural",
+                    "value": "1"
+                  },
+                  {
+                    "label": "2",
+                    "value": "2"
+                  },
+                  {
+                    "label": "3",
+                    "value": "3"
+                  },
+                  {
+                    "label": "4",
+                    "value": "4"
+                  },
+                  {
+                    "label": "5 - Very natural",
+                    "value": "5"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "items": [
+              {
+                "type": "dataset_field",
+                "field": "audio_b"
+              },
+              {
+                "type": "multiple_choice",
+                "description": "Naturalness score for Audio B",
+                "helper_text": "1 = robotic, 5 = indistinguishable from a human",
+                "answer_limit": 1,
+                "disable_dropdown": true,
+                "options": [
+                  {
+                    "label": "1 - Very unnatural",
+                    "value": "1"
+                  },
+                  {
+                    "label": "2",
+                    "value": "2"
+                  },
+                  {
+                    "label": "3",
+                    "value": "3"
+                  },
+                  {
+                    "label": "4",
+                    "value": "4"
+                  },
+                  {
+                    "label": "5 - Very natural",
+                    "value": "5"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "columns": [
+          {
+            "items": [
+              {
+                "type": "multiple_choice",
+                "description": "Which voice sounds more natural overall?",
+                "helper_text": "Your overall preference, independent of the scores above",
+                "answer_limit": 1,
+                "disable_dropdown": true,
+                "options": [
+                  {
+                    "label": "Audio A",
+                    "value": "audio_a"
+                  },
+                  {
+                    "label": "Audio B",
+                    "value": "audio_b"
+                  },
+                  {
+                    "label": "Both equally natural",
+                    "value": "tie"
+                  },
+                  {
+                    "label": "Neither sounds natural",
+                    "value": "neither"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]
