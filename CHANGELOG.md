@@ -8,6 +8,12 @@ For the versioning model (the release-train number vs. independent
 per-plugin versions), see
 [DEVELOPMENT.md](./DEVELOPMENT.md#how-the-versions-move).
 
+## 0.5.0
+
+### release-tech-announce
+
+- [feat] New skill: drafts a punchy, company-wide internal Slack announcement for a Prolific product or feature release, pulling the real facts from a Linear ticket, GitHub PR, or Notion/Slack doc. Reverse-engineered from the highest-engagement posts in `#prolific-tech-announcements` and PM "roast my comms" feedback; enforces impact-first headlines, customer-value framing, and asks for missing metrics/quotes/demos rather than fabricating them. Added to the `prolific-beta-skills` plugin.
+
 ## 0.4.0
 
 ### batch-task-create
