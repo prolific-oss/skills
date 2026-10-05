@@ -8,6 +8,12 @@ For the versioning model (the release-train number vs. independent
 per-plugin versions), see
 [DEVELOPMENT.md](./DEVELOPMENT.md#how-the-versions-move).
 
+## 0.5.0
+
+### build-prolific-audience
+
+- [feat] New skill: builds, previews, refines, and exports recruitment audiences using Prolific CLI search, count, and breakdown commands. Includes workspace rule-tree guidance, named group/study search, reusable audience JSON, and breakdown charts. Added to `prolific-beta-skills` (0.4.0).
+
 ## 0.4.0
 
 ### batch-task-create
