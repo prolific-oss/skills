@@ -18,7 +18,7 @@ Use these as written. Omitting the output flag opens an interactive browser that
 | resolve a prior study | `prolific study search <name> --csv -w <ws> --skill find-audience` |
 | learn how this workspace lets filters combine | `prolific filters rule-tree --json -w <ws> --skill find-audience` |
 | count an audience | `prolific audience count --filters '<array>' --json -w <ws> --skill find-audience` |
-| split a count by one dimension | `prolific audience breakdown --filters '<array>' --breakdown '<leaf>' --json -w <ws> --skill find-audience` |
+| split a count by one dimension | `prolific audience breakdown --filters '<array>' --breakdown '{"filter_id":"X","selected_values":["0"]}' --json -w <ws> --skill find-audience` |
 
 Read the CSV directly — it carries the columns you need and is several times smaller than the same
 data as JSON, so there is no parsing step.
@@ -100,3 +100,8 @@ requirement needs an OR — UK residents who are 18-25 **or** 60+:
 ```
 
 Multiple values of a *single* select filter never need a group — they go in one `selected_values`.
+
+`--breakdown` takes one filter object, not an array and never a group: `selected_values` for a
+select filter, `selected_range` for a numeric one. Split by a different criterion from the base
+audience — the `N/A` bucket is everyone in the audience who falls outside it, including people who
+never answered.
