@@ -10,9 +10,9 @@ per-plugin versions), see
 
 ## 0.5.0
 
-### build-prolific-audience
+### find-audience
 
-- [feat] New skill: builds, previews, refines, and exports recruitment audiences using Prolific CLI search, count, and breakdown commands. Includes workspace rule-tree guidance, named group/study search, reusable audience JSON, and breakdown charts. Added to `prolific-beta-skills` (0.4.0).
+- [feat] New skill: navigates the Prolific participant pool to find and size an audience, using the CLI's catalogue, search, count, and breakdown commands. Covers named group/study lookup, nested AND/OR criteria, and breakdown charts. Added to `prolific-beta-skills` (0.4.0), with an eval dataset under `evals/find-audience/`.
 
 ## 0.4.0
 

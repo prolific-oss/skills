@@ -19,7 +19,7 @@
         "./skills/recommend-study-filters",
         "./skills/whoami",
         "./skills/batch-task-create",
-        "./skills/build-prolific-audience"
+        "./skills/find-audience"
       ],
       "author": {
         "name": "Prolific"
