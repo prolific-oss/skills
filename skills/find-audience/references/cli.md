@@ -18,7 +18,7 @@ Use these as written. Omitting the output flag opens an interactive browser that
 | resolve a prior study | `prolific study search <name> --csv -w <ws> --skill find-audience` |
 | learn how this workspace lets filters combine | `prolific filters rule-tree --json -w <ws> --skill find-audience` |
 | count an audience | `prolific audience count --filters '<array>' --json -w <ws> --skill find-audience` |
-| split a count by one dimension | `prolific audience breakdown --filters '<array>' --breakdown '{"filter_id":"X","selected_values":["0"]}' --json -w <ws> --skill find-audience` |
+| split a count by one dimension | `prolific audience breakdown --filters '<array>' --breakdown '<filter>' --json -w <ws> --skill find-audience` |
 
 Read the CSV directly — it carries the columns you need and is several times smaller than the same
 data as JSON, so there is no parsing step.
@@ -69,7 +69,13 @@ The tree governs structure only. IDs and bounds come from the filters themselves
 
 ## Payload shape
 
-A filter payload is a JSON array. Top-level entries combine with **AND** — UK residents aged 25-40:
+A **filter** is `{"filter_id": ..., "selected_values": [...]}` for a select filter, or
+`{"filter_id": ..., "selected_range": {"lower": N, "upper": N}}` for a numeric one.
+
+- `--filters` takes an array of them. Top-level entries combine with **AND**.
+- `--breakdown` takes exactly one, and never a group.
+
+UK residents aged 25-40:
 
 ```json
 [
@@ -78,10 +84,8 @@ A filter payload is a JSON array. Top-level entries combine with **AND** — UK 
 ]
 ```
 
-- `selected_values` takes choice **IDs**, never labels. Several acceptable values of one criterion
-  go in one array.
-- `selected_range` takes `{"lower": N, "upper": N}`.
-- Never both on the same leaf.
+`selected_values` takes choice **IDs**, never labels, and several acceptable values of one
+criterion go in one array. Never put both selection forms on the same filter.
 
 A group is `{"filter_id": "and"|"or", "selected_filters": [...]}` and may nest. Use one when a
 requirement needs an OR — UK residents who are 18-25 **or** 60+:
@@ -101,7 +105,5 @@ requirement needs an OR — UK residents who are 18-25 **or** 60+:
 
 Multiple values of a *single* select filter never need a group — they go in one `selected_values`.
 
-`--breakdown` takes one filter object, not an array and never a group: `selected_values` for a
-select filter, `selected_range` for a numeric one. Split by a different criterion from the base
-audience — the `N/A` bucket is everyone in the audience who falls outside it, including people who
-never answered.
+Break down by a different criterion from the base audience. The `N/A` bucket is everyone in the
+audience who falls outside the breakdown filter, including people who never answered it.
