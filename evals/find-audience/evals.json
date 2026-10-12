@@ -1,0 +1,138 @@
+{
+  "skill_name": "find-audience",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I'm running a study on workplace productivity tools. I need US-based participants who are employed full-time and aged between 25 and 45. Use workspace ID '{{PROLIFIC_TEST_WORKSPACE_ID}}' and do not guess or replace it. The `prolific` CLI is on PATH, so invoke it directly as `prolific ...`.",
+      "expected_output": "The agent searches the catalogue for country of residence, employment status, and age rather than dumping the whole catalogue, builds a {\"filters\": [...]} payload with resolved filter_ids and choice keys, runs 'prolific audience count' against the given workspace, and reports the count it got back alongside the JSON. Every CLI call carries --skill find-audience, and the answer shows the filters array alongside the count it returned.",
+      "assertions": [
+        "The agent runs 'prolific filters search' at least once",
+        "The agent does not fetch the whole filter catalogue with 'prolific filters list'",
+        "The agent runs 'prolific audience count' before stating any participant count",
+        "The agent passes the workspace ID it was given rather than a different or invented one",
+        "The agent's answer includes a participant count, not only a list of filters",
+        "The agent shows both the filters JSON it counted and the count that array returned",
+        "The agent passes '--skill find-audience' on its prolific CLI calls",
+        "The agent passes an output flag on every prolific call — '--csv' for list commands, '--json' for rule-tree and counts",
+        "The agent does not mention workspace rules or the rule tree in its answer"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I want to study online learning habits among working-age adults in the UK who hold at least a university degree. Use workspace ID '{{PROLIFIC_TEST_WORKSPACE_ID}}' and do not guess or replace it. The `prolific` CLI is on PATH, so invoke it directly as `prolific ...`.",
+      "expected_output": "The agent searches for UK residence, education level, and age filters, resolves the education choice keys for degree level and above from catalogue data rather than guessing them, counts the assembled audience, and reports the count with the payload.",
+      "assertions": [
+        "The agent searches for the residence, education, and age criteria",
+        "At least one of the agent's search queries uses wording likely to appear as an option label, not only the abstract concept",
+        "Every choice ID the agent puts in selected_values comes from a 'prolific filters choices' result, or the agent says it could not resolve it",
+        "The agent runs 'prolific audience count' and then states a participant count",
+        "The agent describes the education criterion using the filter's own option wording rather than substituting its own terms",
+        "The agent shows both the filters JSON it counted and the count that array returned",
+        "The agent runs a '--help' command, or otherwise uses only flags that work, rather than inventing one that fails"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "I'm researching the impact of early childcare on parental wellbeing. My participants must be parents with at least one child under 5 years old, currently not in employment, and must have English as their first language. Use workspace ID '{{PROLIFIC_TEST_WORKSPACE_ID}}' and do not guess or replace it. The `prolific` CLI is on PATH, so invoke it directly as `prolific ...`.",
+      "expected_output": "The agent searches for parental status, child age, employment status, and first language filters, states any assumption it makes in translating 'under 5' into the catalogue's representation, counts the combined audience, and reports the count. It does not quietly drop a criterion it could not express.",
+      "assertions": [
+        "The agent issues multiple distinct searches covering the separate criteria",
+        "The agent runs 'prolific audience count' and states a participant count",
+        "If the agent cannot express one of the four criteria, it says which one rather than omitting it silently",
+        "The agent states the assumption it used to translate 'child under 5' into the filter's own representation",
+        "The agent shows both the filters JSON it counted and the count that array returned"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "I'm studying how people respond to unexpected life events. I need participants who have experienced a major personal crisis in the last 6 months. Use workspace ID '{{PROLIFIC_TEST_WORKSPACE_ID}}' and do not guess or replace it. The `prolific` CLI is on PATH, so invoke it directly as `prolific ...`.",
+      "expected_output": "The agent searches several phrasings, finds no filter that captures a recent major personal crisis, and says so plainly. It offers broader or proxy criteria and explains how they differ from what was asked, rather than quietly substituting a different population and counting that as if it were the request.",
+      "assertions": [
+        "The agent runs 'prolific filters search' with more than one distinct query phrasing before concluding anything about availability",
+        "The agent states explicitly that the requested criterion is not available in the catalogue",
+        "If the agent offers a proxy or broader criterion, it explains how that differs from what was asked",
+        "The agent does not present a count for a substituted audience as though it answered the original request",
+        "The agent does not invent a filter_id for the unavailable criterion"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Give me a count for nurses in the UK, and then tell me roughly how many there'd be if I widened it to all healthcare workers. Use workspace ID '{{PROLIFIC_TEST_WORKSPACE_ID}}' and do not guess or replace it. The `prolific` CLI is on PATH, so invoke it directly as `prolific ...`.",
+      "expected_output": "The agent counts the nurses audience, then runs a second, separate 'prolific audience count' for the widened healthcare-worker audience rather than estimating, scaling, or extrapolating the second number from the first. If it cannot run the second count it says so instead of producing a figure.",
+      "assertions": [
+        "The agent runs 'prolific audience count' more than once, or explains why the second count could not be run",
+        "The agent does not describe any participant number it gives as an estimate, approximation, extrapolation, or rough figure",
+        "The agent does not derive the second number arithmetically from the first",
+        "If several filters together make up the widened audience, the agent counts them as one OR'd group rather than adding their separate counts",
+        "If the agent gives a number for the widened audience, it attributes that number to a count command it ran rather than to reasoning",
+        "The agent sends independent counts in the same turn rather than one round per variant"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Break my UK audience down by age band, then tell me the total across all the bands. Use workspace ID '{{PROLIFIC_TEST_WORKSPACE_ID}}' and do not guess or replace it. The `prolific` CLI is on PATH, so invoke it directly as `prolific ...`.",
+      "expected_output": "The agent runs one 'prolific audience breakdown' request for the age dimension and presents the per-bucket counts. For the total it runs an audience count for the exact criteria rather than adding the buckets, and says explicitly that summing buckets would not give a valid total.",
+      "assertions": [
+        "The agent runs 'prolific audience breakdown' rather than issuing one count request per age band",
+        "The agent does not present a total obtained by adding the breakdown buckets together",
+        "The agent either runs 'prolific audience count' for the total, or explains that a count request is the only valid way to get one",
+        "The agent presents the breakdown as per-category counts rather than collapsing it to a single figure",
+        "If the agent mentions an N/A category, it explains that it covers participants outside the breakdown filter's values or who did not answer",
+        "The agent passes '--skill find-audience' on its prolific CLI calls"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "I want people who do AI tasks for a living. What filter would that be, and how many are there? Use workspace ID '{{PROLIFIC_TEST_WORKSPACE_ID}}' and do not guess or replace it. The `prolific` CLI is on PATH, so invoke it directly as `prolific ...`.",
+      "expected_output": "The agent searches the catalogue with several phrasings, presents the materially distinct matches, and describes the chosen filter using that filter's own title, description, or option label rather than paraphrasing it into different terms. It then runs a count and reports the result.",
+      "assertions": [
+        "The agent runs 'prolific filters search' with more than one distinct query phrasing",
+        "The agent quotes or closely reuses the filter's own title, description, or option wording when describing who it selects",
+        "The agent does not substitute a broader or different job description for the filter's own wording",
+        "The agent states the filter_id alongside a readable title",
+        "The agent runs 'prolific audience count' and then states a participant count",
+        "The agent tries more than one phrasing before concluding a criterion is unavailable"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "Exclude anyone who took my pilot cohort group, and count what's left. Use workspace ID '{{PROLIFIC_TEST_WORKSPACE_ID}}' and do not guess or replace it. The `prolific` CLI is on PATH, so invoke it directly as `prolific ...`.",
+      "expected_output": "The agent resolves the named group with 'prolific participant-group search'. Several groups match 'pilot' and none is named exactly 'pilot cohort', so it shows the distinguishing names and asks which is meant rather than picking one. If it proceeds with a chosen group it uses a blocklist filter and counts the payload. It never invents a group ID.",
+      "assertions": [
+        "The agent runs 'prolific participant-group search' to resolve the named group",
+        "The agent does not use 'prolific participant search' in place of 'prolific participant-group search'",
+        "If several groups match and none is an exact match for the name given, the agent asks which is meant rather than silently picking one",
+        "Any participant group ID the agent puts in a payload appears in the output of a search command it ran, or the agent says the group could not be resolved",
+        "If the agent builds a payload, it uses a blocklist rather than an allowlist filter for the exclusion",
+        "The agent runs 'prolific audience count' on the resulting payload, or explains why it could not",
+        "The agent passes '--skill find-audience' on its prolific CLI calls"
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "I need people who are either 18-25 or 60+, in the UK. Count that. Use workspace ID '{{PROLIFIC_TEST_WORKSPACE_ID}}' and do not guess or replace it. The `prolific` CLI is on PATH, so invoke it directly as `prolific ...`.",
+      "expected_output": "The agent builds a nested group using filter_id 'or' with a selected_filters array holding the two age ranges, keeps the UK criterion ANDed at the top level, and submits it to 'prolific audience count'. It does not flatten the OR into one wide age range or into an AND, and it does not refuse to count because workspace rules could not be retrieved. It shows the filters array it counted alongside the returned count.",
+      "assertions": [
+        "The agent's payload contains a filter with filter_id 'or' and a selected_filters array",
+        "The agent keeps the two age ranges as separate entries rather than merging them into one continuous range",
+        "The agent does not replace the OR relation with an AND",
+        "The agent runs 'prolific audience count' even if it could not retrieve the workspace rule tree",
+        "The agent states a participant count, or explains what the count command returned instead",
+        "The agent shows both the filters JSON it counted and the count that array returned",
+        "The agent does not narrate fetching or reading the workspace rule tree unless a rule actually blocked the audience"
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "Count left-handed vegan pilots in Luxembourg aged 19. Use workspace ID '{{PROLIFIC_TEST_WORKSPACE_ID}}' and do not guess or replace it. The `prolific` CLI is on PATH, so invoke it directly as `prolific ...`.",
+      "expected_output": "Every criterion here is expressible: handedness, diet, a pilot job role, country of residence and age all exist in the catalogue, though the pilot role sits deep in a large choice list. The agent resolves them, counts, and gets zero. It reports that as zero or below the reporting threshold, not as proof that no such participants exist.",
+      "assertions": [
+        "The agent runs 'prolific audience count' rather than declaring the audience unsupported without attempting it",
+        "The agent uses 'prolific filters choices' or 'prolific filters choices search' to find the pilot job role rather than guessing its ID",
+        "If the agent reports a zero count, it describes it as zero or below the reporting threshold rather than as proof that no participants exist",
+        "If the agent says a criterion is unavailable, it names which specific criterion",
+        "The agent does not state a participant count for any criterion it was unable to express as a filter"
+      ]
+    }
+  ]
+}

@@ -57,6 +57,18 @@ String fields in `evals.json` can also reference environment variables with `{{E
 
 Pass `--tag <name>` (repeatable) to attach skill-specific Langfuse tags for a run, e.g. `--tag eligibility --tag participant-group`.
 
+Note that anything else you drop in `evals/<skill-name>/` is copied into the agent's working directory before it runs, so keep notes and documentation out of that folder — they become files the agent can see.
+
+### Turn limits
+
+`find-audience` needs more than the default 10 turns: it caches the catalogue, runs several searches,
+extracts choice records, fetches the rule tree and then counts, so a multi-criteria item can run out
+of turns mid-flow and fail on assertions it would otherwise pass.
+
+```bash
+uv run run_evals.py find-audience --both --max-turns 20
+```
+
 ### Eval file structure
 
 Every entry in `evals.json` has three fields:

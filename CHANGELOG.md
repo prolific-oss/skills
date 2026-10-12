@@ -8,6 +8,12 @@ For the versioning model (the release-train number vs. independent
 per-plugin versions), see
 [DEVELOPMENT.md](./DEVELOPMENT.md#how-the-versions-move).
 
+## 0.5.0
+
+### find-audience
+
+- [feat] New skill: navigates the Prolific participant pool to find and size an audience, using the CLI's catalogue, search, count, and breakdown commands. Covers named group/study lookup, nested AND/OR criteria, and breakdown charts. Added to `prolific-beta-skills` (0.4.0), with an eval dataset under `evals/find-audience/`.
+
 ## 0.4.0
 
 ### batch-task-create
