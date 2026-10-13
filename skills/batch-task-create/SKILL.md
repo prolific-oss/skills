@@ -85,9 +85,9 @@ Guidelines:
 
 With `strict: true` every record must carry every declared field, and undeclared fields are rejected.
 
-Create the dataset **with** the schema (`--schema`). A dataset created without one stalls in `pending_schema` and imports nothing.
+Create the dataset **with** the schema (`--schema`). A dataset created without one stalls in `pending_schema` and imports nothing. If the schema file already sets `"strict"`, do not also pass `--strict` to `dataset create`; the CLI rejects that combination.
 
-If the dataset is CSV with long text, commas, line breaks or `|` characters, convert it to JSONL first (one JSON object per line). In testing, a schema-first CSV with long text containing such characters was parsed with the whole header line as a single field and every row was rejected (cause not confirmed); the same data as JSONL imported cleanly. For `dataset upload`, let the CLI detect the format from the file extension; do not pass `--format jsonl`, which led to a doubled extension and a failed request.
+When in doubt, convert the dataset to JSONL first (one JSON object per line). Keep CSV only when every value is short and plain: no commas, quotes, line breaks or `|` characters inside values. In testing, a schema-first CSV with long text containing such characters was parsed with the whole header line as a single field and every row was rejected (cause not confirmed); the same data as JSONL imported cleanly. For `dataset upload`, let the CLI detect the format from the file extension; do not pass `--format jsonl`, which led to a doubled extension and a failed request.
 
 Create a local schema file such as:
 
@@ -134,7 +134,7 @@ Layout rules that are easy to get wrong:
 - `rich_text` accepts markdown or basic HTML. Do not use `style` attributes; the API rejects them. A markdown table needs a blank line before it.
 - Define questions inline in `batch_items`. Do not add instructions with the separate `batch instructions` command; that endpoint is deprecated for batches that use `batch_items`.
 
-For batch task layouts, use `examples/audio-comparison-batch-items.json` as the example json file
+For batch task layouts, use `examples/audio-comparison-batch-items.json` as the example json file. Use it for structure only: if the researcher's request differs from the example (fewer or extra questions, different options, a simpler layout), follow the request and do not copy the example's questions or options.
 Create a local layout file such as:
 
 ```bash
@@ -159,7 +159,7 @@ After `dataset upload`, read the printed `Accepted` and `Rejected` counts. Stop 
 
 `batch create` requires `--task-name`, `--task-introduction` and `--task-steps`. The introduction and steps accept basic HTML. Quote them carefully, since apostrophes and double quotes inside the value break the shell command.
 
-Set up the task structure — group the dataset rows into participant tasks with `--tasks-per-group`. One group is one submission for a participant, so choose it from how long a group should take. The default is 1. Setup needs rows in the dataset, runs once per batch, and cannot be repeated.
+Set up the task structure — group the dataset rows into participant tasks with `--tasks-per-group`. One group is one submission for a participant, so choose it from how long a group should take. The default is 1. If the researcher did not specify it, use 1 and state in your final output which value you used and why. Setup needs rows in the dataset, runs once per batch, and cannot be repeated.
 
 ```bash
 prolific aitaskbuilder batch setup -b "<batch_id>" -d "<dataset_id>" --tasks-per-group <n>
