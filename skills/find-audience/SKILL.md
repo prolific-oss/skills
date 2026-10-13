@@ -1,7 +1,7 @@
 ---
 name: find-audience
 description: Navigates the Prolific participant pool to find and size an audience. Use when someone asks who is in the pool, which criteria exist, how many participants match, or wants an audience narrowed, widened, counted, or broken down.
-version: 0.1.0
+version: 0.1.1
 ---
 
 ## Find an Audience
@@ -15,6 +15,9 @@ questions about the pool as readily as you assemble a selection from it.
 - [CLI reference](references/cli.md): which command to reach for, the traps, and payload shape. Read
   it before your first command.
 - [Chart guidance](references/charts.md): read when turning a breakdown into a chart.
+- [Audience evidence](references/audience-evidence.md): read before recommending filters when the
+  request depends on professional standing, specialist knowledge or demonstrated task ability, or
+  when a candidate filter is categorised as Domain Experts.
 
 The reference gives the exact invocation for each command. Use those. Reach for
 `prolific <command> --help` only when you need something they don't cover, and never guess a flag.
@@ -24,10 +27,10 @@ The reference gives the exact invocation for each command. Use those. Reach for
 These hold at every step; the rest of this skill assumes them.
 
 1. **Every number comes from a result in this conversation.** Never state a count you did not
-   retrieve — not by adding, scaling, interpolating, estimating, rounding, or recalling a figure
+   retrieve, not by adding, scaling, interpolating, estimating, rounding, or recalling a figure
    from earlier in the chat. Changed criteria need a fresh count, however small the change.
 2. **Never combine counts; request the one you want.** Separate audiences and breakdown buckets do
-   not add up to a union, a total, or a count for different criteria — whether or not the categories
+   not add up to a union, a total, or a count for different criteria, whether or not the categories
    overlap. So when a broad term maps to several candidate filters, count each one *and* build the
    OR'd group and count that as its own request. The union is a count you make, never a sum you
    compute.
@@ -57,6 +60,12 @@ the two searches differ and how to phrase a query.
 
 Never guess an ID.
 
+For expertise-dependent requests, actively consider relevant Domain Expert audiences across domains,
+using the audience-evidence reference to distinguish self-report, checked credentials, assessed domain
+skills and assessed task skills. Recommend the strongest relevant evidence for the task and explain
+its scope. Do not require both occupation and assessed expertise unless both are necessary, and do
+not infer assessment scores or uniform verification methods from a category label.
+
 Filters that match the same request can select quite different populations. Read each candidate's
 question text, selection type, and choices, then explain the deciding differences in those terms
 rather than from titles. Present every materially distinct match you found, without implying a
@@ -81,7 +90,7 @@ workspace.
 Before the first count or breakdown, fetch the workspace rule tree once and keep it. Validate any
 group you build against it rather than sending a request the server will reject.
 
-Do this silently. The tree is plumbing — don't narrate fetching it, and don't report rules the
+Do this silently. The tree is plumbing; don't narrate fetching it, and don't report rules the
 audience never ran into. Mention it only when it actually blocks what the researcher asked for, and
 then say what has to change, not what the tree says.
 
@@ -113,7 +122,7 @@ category.
 
 Whenever you present an audience, give both halves:
 
-1. **The filters JSON** — the array you passed to `--filters`, verbatim, in a code block.
+1. **The filters JSON**: the array you passed to `--filters`, verbatim, in a code block.
 2. **The count** that exact array returned.
 
 They travel together. A payload with no count is unverified; a count with no payload cannot be

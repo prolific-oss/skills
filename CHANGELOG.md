@@ -8,6 +8,14 @@ For the versioning model (the release-train number vs. independent
 per-plugin versions), see
 [DEVELOPMENT.md](./DEVELOPMENT.md#how-the-versions-move).
 
+## 0.5.2
+
+_Plugins: prolific-beta-skills 0.4.0 to 0.4.2_
+
+### find-audience
+
+- [fix] Recommend specialist audiences using the strongest relevant evidence across Domain Expert pools, distinguishing self-reported occupation and proficiency from checked credentials, assessed domain skills and assessed task skills. Adds public verification guidance and regression scenarios for coding, language, healthcare and STEM tasks, while preserving explicit self-report and occupational requests.
+
 ## 0.5.0
 
 ### find-audience

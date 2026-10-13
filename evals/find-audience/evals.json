@@ -133,6 +133,79 @@
         "If the agent says a criterion is unavailable, it names which specific criterion",
         "The agent does not state a participant count for any criterion it was unable to express as a filter"
       ]
+    },
+    {
+      "id": 11,
+      "prompt": "Find UK residents aged 25-40 who can evaluate the correctness of AI-generated Python code. Recommend the best-supported audience, count it, and show reusable filter JSON. Explain what evidence supports their coding ability. Use workspace ID '{{PROLIFIC_TEST_WORKSPACE_ID}}' and do not guess or replace it. The `prolific` CLI is on PATH, so invoke it directly as `prolific ...`.",
+      "expected_output": "The agent discovers the Python filter under Domain Experts and its live choice, distinguishes it from self-reported programming-languages proficiency, and recommends the assessed Python audience with UK residence and ages 25-40. It counts the exact payload, explains the documented coding assessment without inventing details or guaranteeing performance on this particular task, and does not require a developer occupation or AI Tasker qualification unless the user also needs those.",
+      "assertions": [
+        "The agent discovers and recommends the Python Domain Experts filter, rather than only a self-reported job role or programming-language answer",
+        "The recommended audience preserves UK residence and the age range 25-40",
+        "The agent explains that programming Domain Experts have assessed coding ability and distinguishes this from self-reported proficiency",
+        "The agent does not add a current developer occupation or AI Tasker qualification to the recommended audience without a task-specific reason",
+        "The agent runs audience count and shows the exact recommended filter array with its returned count",
+        "The agent does not invent an assessment score, pass threshold, date, provider, or guarantee that every participant passed this specific code-evaluation task"
+      ]
+    },
+    {
+      "id": 12,
+      "prompt": "I need people to evaluate French-language AI responses for fluency and naturalness. Recommend the best-supported audience with counts and explain the evidence supporting their language ability. Use workspace ID '{{PROLIFIC_TEST_WORKSPACE_ID}}' and do not guess or replace it. The `prolific` CLI is on PATH, so invoke it directly as `prolific ...`.",
+      "expected_output": "The agent discovers and recommends the French Domain Experts qualification, explains documented fluency testing, and distinguishes it from the fluent-languages profile answer. It counts the recommended audience and any self-reported alternative separately, shows the exact filter arrays, and does not add French nationality, residence, native-language status, or an arbitrary test-score cutoff.",
+      "assertions": [
+        "The agent discovers and recommends a French Domain Experts qualification for evaluating French fluency and naturalness",
+        "The agent distinguishes assessed language expertise from self-reported fluent French",
+        "The agent counts the complete recommended audience and shows its reusable filter array with the returned count",
+        "If the agent reports a count for a self-reported alternative, it runs a separate count for that exact audience",
+        "The agent does not require French nationality, French residence or native-language status merely because French fluency is needed",
+        "The agent does not choose an arbitrary language-test score cutoff or invent individual assessment details"
+      ]
+    },
+    {
+      "id": 13,
+      "prompt": "For a survey about language-learning habits, find participants who report speaking French fluently. Count them and explain what the selected filter establishes. Use workspace ID '{{PROLIFIC_TEST_WORKSPACE_ID}}' and do not guess or replace it. The `prolific` CLI is on PATH, so invoke it directly as `prolific ...`.",
+      "expected_output": "The agent honours the explicit self-report request, selecting the live French option within fluent-languages and counting that audience. It describes claimed fluency without silently substituting or ANDing a Domain Expert qualification. It may explain the stronger assessed alternative as a separate option without applying it.",
+      "assertions": [
+        "The recommended audience uses the self-reported French fluency criterion requested by the user",
+        "The agent does not silently replace the self-reported criterion with a Domain Expert qualification or require both",
+        "The agent describes the selected evidence as self-reported or claimed fluency, without claiming that this filter proves assessed ability",
+        "The agent runs audience count and shows the exact filters array alongside the count"
+      ]
+    },
+    {
+      "id": 14,
+      "prompt": "Find UK doctors to review the clinical accuracy of AI-generated medical explanations. Recommend the best-supported available audience and explain how professional standing and clinical expertise are supported. Use workspace ID '{{PROLIFIC_TEST_WORKSPACE_ID}}' and do not guess or replace it. The `prolific` CLI is on PATH, so invoke it directly as `prolific ...`.",
+      "expected_output": "The agent actively discovers relevant healthcare Domain Expert or credential-checked audiences, compares their documented scope with self-reported occupation, and recommends an available qualification appropriate to the clinical-review task. It preserves UK residence and counts a supported audience. It distinguishes professional credentials from clinical or task assessments and does not assume every healthcare expert underwent identical checks. If the available catalogue cannot establish a required qualification, it explains the gap instead of describing a proxy as verified.",
+      "assertions": [
+        "The agent actively searches for relevant healthcare Domain Expert or independently credential-checked criteria rather than only self-reported medical occupation",
+        "If a relevant verified qualification is available, the agent considers it in the recommendation and explains its documented evidence",
+        "The agent preserves UK residence and counts any complete audience it presents",
+        "The agent distinguishes checked professional standing from demonstrated clinical or task ability",
+        "The agent does not invent licence status, assessment scores, dates or uniform verification methods across healthcare pools",
+        "If required qualification evidence is unavailable, the agent discloses that gap rather than presenting self-report as verification"
+      ]
+    },
+    {
+      "id": 15,
+      "prompt": "I am surveying the working lives of UK software developers aged 25-40. I need participants whose current occupation is Software Engineer / Developer, regardless of which programming language they use. Count that audience. Use workspace ID '{{PROLIFIC_TEST_WORKSPACE_ID}}' and do not guess or replace it. The `prolific` CLI is on PATH, so invoke it directly as `prolific ...`.",
+      "expected_output": "The agent selects the live current-job-role option Software Engineer / Developer, UK residence and ages 25-40, then counts that payload. It preserves the occupational research intent and does not add a language-specific Domain Expert qualification or claim that the occupation filter establishes assessed coding ability.",
+      "assertions": [
+        "The recommended audience includes the current-job-role choice Software Engineer / Developer and preserves UK residence and ages 25-40",
+        "The agent does not add a programming-language Domain Expert or AI Tasker qualification to this occupational survey",
+        "The agent does not describe a self-reported occupational choice as proof of assessed coding proficiency",
+        "The agent counts and displays the exact recommended filter array"
+      ]
+    },
+    {
+      "id": 16,
+      "prompt": "I need participants to check AI-generated physics answers for scientific accuracy. Find the best-supported specialist audience, count it and explain what the available qualification establishes. Use workspace ID '{{PROLIFIC_TEST_WORKSPACE_ID}}' and do not guess or replace it. The `prolific` CLI is on PATH, so invoke it directly as `prolific ...`.",
+      "expected_output": "The agent searches for relevant physics or STEM Domain Expert qualifications alongside ordinary study or degree answers. It recommends the strongest relevant externally selectable evidence when documented, without claiming that all STEM qualifications share an assessment. It counts supported complete audiences and explains missing qualification detail or unavailable specialist criteria without inventing them.",
+      "assertions": [
+        "The agent actively searches for physics or STEM Domain Expert qualifications rather than stopping at self-reported study or degree subjects",
+        "The recommendation compares the evidence supporting specialist expertise rather than using a larger count as proof of greater suitability",
+        "The agent does not assert a uniform assessment, score or credential process across all STEM expert filters",
+        "The agent counts and shows any complete supported audience it recommends, or explains why the requested qualification could not be established",
+        "The agent does not invent filter identifiers or call an undocumented degree or study-subject answer verified expertise"
+      ]
     }
   ]
 }
