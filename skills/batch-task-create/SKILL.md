@@ -125,7 +125,7 @@ Layout heuristics:
 
 Layout rules that are easy to get wrong:
 
-- Set `"disable_dropdown": true` on every `multiple_choice`. Without it, a short list can still render as a dropdown instead of radio buttons.
+- Set `"disable_dropdown": true` on every `multiple_choice` and `multiple_choice_with_free_text`. Without it, a short list can still render as a dropdown instead of radio buttons.
 - Free-text boxes are **required** unless the item has `"optional": true`, even if the question text says "(optional)".
 - Instruction items take `description` for the question text and `helper_text` for guidance. They have no `title` field, and `order` must not be set because position in the layout sets the order.
 - Both columns in a row take the height of the taller one, which leaves blank space under the shorter. Pair items of similar length, and use one column for pages with long text.
@@ -155,7 +155,7 @@ prolific aitaskbuilder batch create -n "<batch_name>" -w <workspace_id> -d "<dat
 
 Capture and reuse the IDs returned by the CLI.
 
-After `dataset upload`, read the printed `Accepted` and `Rejected` counts. Stop and fix the data or schema if `Rejected` is not 0 or `Accepted` does not match the row count. Do not create the batch on a partly imported dataset.
+After `dataset upload`, read the printed `Accepted`, `Imported` and `Rejected` counts. `Accepted` also counts duplicate rows, which are not written twice, so compare `Imported` (not `Accepted`) with the number of rows in the file. Stop and fix the data or schema if `Rejected` is not 0 or `Imported` does not match the row count, and if rows are missing because of duplicates, tell the researcher. Do not create the batch on a partly imported dataset.
 
 `batch create` requires `--task-name`, `--task-introduction` and `--task-steps`. The introduction and steps accept basic HTML. Quote them carefully, since apostrophes and double quotes inside the value break the shell command.
 
