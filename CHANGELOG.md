@@ -8,6 +8,14 @@ For the versioning model (the release-train number vs. independent
 per-plugin versions), see
 [DEVELOPMENT.md](./DEVELOPMENT.md#how-the-versions-move).
 
+## 0.5.1
+
+_Plugins: prolific-beta-skills 0.4.0→0.4.1_
+
+### batch-task-create
+
+- [fix] Stops before creating a study, checks the dataset import result before creating the batch, and documents layout behaviour that was wrong or unclear: free-text boxes are required unless `optional` is set, `disable_dropdown` for radio buttons, shared column heights, one use per dataset field per page, `batch update` after setup, and failure modes for schema-less datasets, partial imports and rejected `style` attributes.
+
 ## 0.5.0
 
 ### find-audience

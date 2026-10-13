@@ -1,7 +1,7 @@
 ---
 name: batch-task-create
 description: Creates a Prolific AI Task Builder batch from a researcher-provided dataset by generating the dataset schema, building the `batch_items` layout, and executing the CLI workflow. Use when a researcher wants participants to evaluate or annotate their own data (text, image, audio or video). Stops at a set-up, previewable batch and does not create a study.
-version: 0.1.0
+version: 0.1.1
 ---
 
 ## Create Batch From Dataset
