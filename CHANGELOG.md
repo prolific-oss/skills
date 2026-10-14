@@ -14,7 +14,7 @@ _Plugins: prolific-beta-skills 0.4.1 to 0.4.2_
 
 ### find-audience
 
-- [fix] Match specialist audience recommendations to the strongest relevant qualification evidence, with concise, source-backed guidance across Domain Expert pools. Preserve explicit self-report and occupational requests. Add regression and generalisation scenarios for coding, language, healthcare and STEM tasks, including unavailable qualification details. Retry blocked read-only lookups through the environment's network-permission flow without inventing fallback audiences.
+- [fix] Match specialist audience recommendations to the strongest relevant qualification evidence, with concise, source-backed guidance across Domain Expert pools. Preserve explicit self-report and occupational requests. Add regression and generalisation scenarios for coding, language, healthcare and STEM tasks, including unavailable qualification details.
 
 ## 0.5.1
 
