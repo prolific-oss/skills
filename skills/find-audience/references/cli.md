@@ -52,6 +52,11 @@ fetch each one at most once and grep the file for later lookups.
 - **A count of zero may be a privacy floor**, not an empty pool.
 - **If a request fails, say so.** Never fill the gap with a guessed ID.
 
+For DNS or network failures, use the environment's normal network-permission flow if available
+and retry the failed read-only lookup once. If access is denied or the retry fails, report the
+blocked lookup. A connection failure does not establish that a filter is unavailable; do not
+recommend an audience unsupported by retrieved data.
+
 ## Reading the rule tree
 
 The response holds a tree of `and` / `or` nodes. Read its shape from the response rather than

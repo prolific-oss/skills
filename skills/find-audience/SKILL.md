@@ -15,9 +15,8 @@ questions about the pool as readily as you assemble a selection from it.
 - [CLI reference](references/cli.md): which command to reach for, the traps, and payload shape. Read
   it before your first command.
 - [Chart guidance](references/charts.md): read when turning a breakdown into a chart.
-- [Audience evidence](references/audience-evidence.md): read before recommending filters when the
-  request depends on professional standing, specialist knowledge or demonstrated task ability, or
-  when a candidate filter is categorised as Domain Experts.
+- [Audience evidence](references/audience-evidence.md): read when assessing a qualification's meaning
+  or recommending an audience for professional standing or demonstrated specialist ability.
 
 The reference gives the exact invocation for each command. Use those. Reach for
 `prolific <command> --help` only when you need something they don't cover, and never guess a flag.
@@ -60,11 +59,11 @@ the two searches differ and how to phrase a query.
 
 Never guess an ID.
 
-For expertise-dependent requests, actively consider relevant Domain Expert audiences across domains,
-using the audience-evidence reference to distinguish self-report, checked credentials, assessed domain
-skills and assessed task skills. Recommend the strongest relevant evidence for the task and explain
-its scope. Do not require both occupation and assessed expertise unless both are necessary, and do
-not infer assessment scores or uniform verification methods from a category label.
+Infer the evidence needed from the task. For professional standing or demonstrated specialist
+ability, search relevant Domain Expert qualifications alongside profile filters and recommend the
+strongest relevant evidence. Use the audience-evidence reference to explain what it establishes.
+Preserve explicit occupational or self-report requests; add qualification restrictions only when
+the task requires them. Require occupation and qualification together only when both are essential.
 
 Filters that match the same request can select quite different populations. Read each candidate's
 question text, selection type, and choices, then explain the deciding differences in those terms
@@ -80,7 +79,8 @@ a choice between similar filters with whatever tells them apart. Asking without 
 to already know the catalogue. If they hand the choice back, recommend a default and move on.
 
 When nothing in the catalogue fits, say what is unsupported. Offer broader or proxy criteria and
-explain how they differ.
+explain how they differ. If a required qualification is unavailable or unclear, state what remains
+unchecked. Custom screening is a separate setup, not an existing qualification.
 
 ### Step 3: Build and count
 
