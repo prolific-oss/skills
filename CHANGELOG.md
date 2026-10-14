@@ -10,11 +10,19 @@ per-plugin versions), see
 
 ## 0.5.2
 
-_Plugins: prolific-beta-skills 0.4.0 to 0.4.2_
+_Plugins: prolific-beta-skills 0.4.1 to 0.4.2_
 
 ### find-audience
 
 - [fix] Match specialist audience recommendations to the strongest relevant qualification evidence, with concise, source-backed guidance across Domain Expert pools. Preserve explicit self-report and occupational requests. Add regression and generalisation scenarios for coding, language, healthcare and STEM tasks, including unavailable qualification details. Retry blocked read-only lookups through the environment's network-permission flow without inventing fallback audiences.
+
+## 0.5.1
+
+_Plugins: prolific-beta-skills 0.4.0→0.4.1_
+
+### batch-task-create
+
+- [fix] Stops before creating a study, checks the dataset import result before creating the batch, and documents layout behaviour that was wrong or unclear: free-text boxes are required unless `optional` is set, `disable_dropdown` for radio buttons, shared column heights, one use per dataset field per page, `batch update` after setup, and failure modes for schema-less datasets, partial imports and rejected `style` attributes.
 
 ## 0.5.0
 
